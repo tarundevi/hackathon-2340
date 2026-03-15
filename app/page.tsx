@@ -38,8 +38,13 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-gray-100">
-        <div className="text-gray-600">Loading...</div>
+      <div className="flex h-screen w-screen items-center justify-center bg-gt-navy">
+        <div className="flex flex-col items-center gap-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-md bg-gt-techgold/20">
+            <span className="text-3xl">🔗</span>
+          </div>
+          <p className="text-gt-gold font-bold tracking-widest uppercase text-sm">Loading workspace...</p>
+        </div>
       </div>
     )
   }

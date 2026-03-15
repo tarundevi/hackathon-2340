@@ -13,7 +13,11 @@ type Collaborator = {
 
 const COLORS = ['#EAAA00', '#262262', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
 
-export default function LeftPanel() {
+interface LeftPanelProps {
+  onToggle?: () => void;
+}
+
+export default function LeftPanel({ onToggle }: LeftPanelProps) {
   const loadScenario = useGraphStore(state => state.loadScenario);
   const activeScenario = useGraphStore(state => state.activeScenario);
   const setActiveScenario = useGraphStore(state => state.setActiveScenario);
@@ -54,29 +58,39 @@ export default function LeftPanel() {
   };
 
   return (
-    <div className="w-72 bg-white border-r border-gray-200 flex flex-col h-full shadow-lg z-20 relative">
-      <div className="p-6 border-b border-gray-100 bg-gradient-to-b from-gt-navy to-[#1a1744] text-white">
-        <h1 className="font-extrabold text-xl tracking-wide flex items-center gap-2">
-          <span className="text-gt-techgold">GT</span> UML Collab
-        </h1>
-        <p className="text-xs text-gt-light/70 mt-1 font-medium tracking-wider uppercase">CS 2340 Fall</p>
+    <div className="w-72 bg-white border-r border-gt-gold/15 flex flex-col h-full z-20 relative">
+      <div className="p-6 border-b border-gt-gold/20 bg-gt-navy text-white flex items-center justify-between">
+        <div>
+          <h1 className="font-black text-2xl tracking-tight flex items-center gap-2">
+            🏛️ <span className="text-gt-techgold">UML</span>
+          </h1>
+          <p className="text-xs text-gt-gold/70 mt-2 font-bold tracking-widest uppercase">Georgia Tech CS2340</p>
+        </div>
+        {onToggle && (
+          <button
+            onClick={onToggle}
+            title="Hide panel"
+            className="p-2 rounded-md bg-white/10 hover:bg-white/20 text-white transition-all duration-300 ease-out hover:-translate-y-[1px] hover:shadow-sm active:scale-95 focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-1 flex-shrink-0 ml-2"
+          >
+            ◀
+          </button>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-8">
         <div>
-          <h2 className="text-[11px] font-bold text-gt-navy mb-4 uppercase tracking-widest flex items-center gap-2">
-            <span className="w-4 h-[2px] bg-gt-techgold rounded-full"></span>
-            Scenarios
+          <h2 className="text-[10px] font-black text-gt-navy mb-4 uppercase tracking-widest flex items-center gap-2 opacity-80">
+            ▣ Scenarios
           </h2>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2.5">
             {(Object.keys(SCENARIOS) as ScenarioKey[]).map(key => (
               <button
                 key={key}
                 onClick={() => handleLoad(key)}
-                className={`text-left text-sm px-4 py-3.5 rounded-lg transition-all font-medium border duration-200 ${
+                className={`text-left text-sm px-4 py-3 rounded-md transition-all font-semibold border-2 duration-300 ease-out active:scale-95 hover:-translate-y-[1px] focus:outline-none focus:ring-2 focus:ring-gt-navy/20 ${
                   activeScenario === key
-                    ? 'border-gt-techgold bg-gt-techgold/10 text-gt-navy shadow-md'
-                    : 'border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gt-techgold/30 hover:shadow-sm'
+                    ? 'border-gt-techgold bg-gt-techgold/15 text-gt-navy shadow-sm'
+                    : 'border-transparent text-gt-navy/70 hover:text-gt-navy hover:bg-gt-navy/5 hover:border-gray-200 hover:shadow-sm'
                 }`}
               >
                 {SCENARIOS[key].name}
@@ -86,16 +100,16 @@ export default function LeftPanel() {
         </div>
 
         <div>
-           <h2 className="text-[11px] font-bold text-gt-navy mb-3 uppercase tracking-widest flex items-center gap-2">
-             <span className="w-4 h-[2px] bg-gt-techgold rounded-full"></span>
-             Collaborators 
-             <span className="bg-gt-navy text-white px-2 py-0.5 rounded-full text-[10px] ml-1">{collaborators.length}</span>
+           <h2 className="text-[10px] font-black text-gt-navy mb-3 uppercase tracking-widest flex items-center gap-2 opacity-80">
+             👥 Collaborators
+             <span className="bg-gt-navy text-gt-gold px-2.5 py-1 rounded-full text-[9px] ml-auto font-bold">{collaborators.length}</span>
            </h2>
-           <ul className="flex flex-col gap-3">
+           <ul className="flex flex-col gap-2">
              {collaborators.map(c => (
-               <li key={c.clientId} className="flex items-center gap-3 text-sm text-gray-700 font-medium bg-gray-50 p-2 rounded-lg border border-gray-100">
-                 <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: c.color }}></div>
-                 <span className="truncate">{c.name} {c.clientId === awareness.clientID && <span className="text-gray-400 text-xs font-normal ml-1">(You)</span>}</span>
+               <li key={c.clientId} className="flex items-center gap-3 text-sm text-gt-navy/70 font-semibold bg-gt-navy/5 px-3 py-2.5 rounded-md border border-gt-navy/10 hover:bg-gt-navy/10 transition-all">
+                 <div className="w-3 h-3 rounded-full shadow-md ring-2 ring-white" style={{ backgroundColor: c.color }}></div>
+                 <span className="truncate text-sm">{c.name}</span>
+                 {c.clientId === awareness.clientID && <span className="text-gt-gold text-[9px] font-bold ml-auto uppercase tracking-wider">(You)</span>}
                </li>
              ))}
            </ul>

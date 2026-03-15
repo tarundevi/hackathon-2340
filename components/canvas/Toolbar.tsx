@@ -9,8 +9,8 @@ export default function Toolbar() {
   const activeDiagram = useGraphStore(state => state.activeDiagram);
   const [connectMode, setConnectMode] = useGraphStore(state => [state.connectMode, state.setConnectMode]);
 
-  const btnStyle = "bg-gt-navy hover:bg-[#1a1744] text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-md border border-transparent hover:border-gt-techgold transition-all";
-  const btnStyleSecondary = "bg-gray-100 hover:bg-gray-200 text-gt-navy px-5 py-2 rounded-lg text-sm font-semibold shadow-md border border-gray-300 transition-all";
+  const btnStyle = "bg-gt-navy hover:bg-gt-navy/90 active:scale-95 text-white px-5 py-2.5 rounded-md text-sm font-bold border border-transparent hover:-translate-y-[2px] transition-all duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gt-navy/40 focus:ring-offset-2";
+  const btnStyleSecondary = "bg-white hover:bg-gray-50 active:scale-95 text-gt-navy px-5 py-2.5 rounded-md text-sm font-bold border border-gray-200 hover:-translate-y-[2px] transition-all duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2";
 
   const handleUndo = () => {
     try {
@@ -29,27 +29,27 @@ export default function Toolbar() {
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-md px-3 py-2 rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.1)] border border-gray-200 flex gap-3">
+    <div className="bg-white px-4 py-3 rounded-md border border-gt-navy/20 flex gap-3 flex-wrap items-center">
       {activeDiagram === 'dcd' && (
         <button onClick={() => addEntity('class', 'NewClass')} className={btnStyle}>
-          + Add Class
+          ▭ Add Class
         </button>
       )}
-      
+
       {activeDiagram === 'ucd' && (
         <>
           <button onClick={() => addEntity('actor', 'New Actor')} className={btnStyle}>
-            + Add Actor
+            👤 Add Actor
           </button>
           <button onClick={() => addEntity('usecase', 'New Use Case')} className={btnStyle}>
-            + Add Use Case
+            ◯ Add Use Case
           </button>
         </>
       )}
 
       {activeDiagram === 'sd' && (
         <button onClick={() => addEntity('lifeline', 'New Object')} className={btnStyle}>
-          + Add Lifeline
+          ∥ Add Lifeline
         </button>
       )}
 
@@ -68,7 +68,7 @@ export default function Toolbar() {
       </button>
 
       {/* Divider */}
-      <div className="w-px bg-gray-300" />
+      <div className="w-px bg-gt-navy/10 h-6" />
 
       {/* Undo/Redo buttons */}
       <button onClick={handleUndo} className={btnStyleSecondary} title="Undo">
@@ -80,7 +80,7 @@ export default function Toolbar() {
 
       <button
         onClick={() => setConnectMode(!connectMode)}
-        className={connectMode ? "bg-gt-techgold text-gt-navy px-5 py-2 rounded-lg text-sm font-semibold shadow-md border border-transparent transition-all" : btnStyleSecondary}
+        className={connectMode ? "bg-gt-techgold hover:bg-[#e0a800] active:scale-95 text-gt-navy px-5 py-2.5 rounded-md text-sm font-bold border border-transparent transition-all hover:-translate-y-[2px] duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gt-techgold/50 focus:ring-offset-2" : btnStyleSecondary}
         title="Enable connect mode to draw relationships"
       >
         🔗 Connect {connectMode ? '✓' : ''}

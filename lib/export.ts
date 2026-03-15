@@ -10,18 +10,41 @@ export async function exportCanvasToPNG(filename: string = 'diagram.png') {
       throw new Error('Canvas not found');
     }
 
-    // Capture canvas as PNG
-    const canvas = await html2canvas(canvasElement as HTMLElement, {
-      backgroundColor: '#ffffff',
-      scale: 2,
-      logging: false,
-    });
+    // Clone the element to avoid mutating the original
+    const clonedElement = canvasElement.cloneNode(true) as HTMLElement;
 
-    // Create download link
-    const link = document.createElement('a');
-    link.href = canvas.toDataURL('image/png');
-    link.download = filename;
-    link.click();
+    // Create a temporary container to hold the cloned element
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.top = '-9999px';
+    tempContainer.style.visibility = 'hidden';
+    tempContainer.appendChild(clonedElement);
+    document.body.appendChild(tempContainer);
+
+    try {
+      // Capture canvas as PNG with better settings for SVG
+      const canvas = await html2canvas(clonedElement, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        logging: false,
+        allowTaint: true,
+        useCORS: true,
+        width: canvasElement.clientWidth,
+        height: canvasElement.clientHeight,
+      });
+
+      // Create download link
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } finally {
+      // Clean up temporary container
+      document.body.removeChild(tempContainer);
+    }
   } catch (error) {
     console.error('Export failed:', error);
     throw error;

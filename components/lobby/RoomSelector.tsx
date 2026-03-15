@@ -34,53 +34,66 @@ export default function RoomSelector({ onRoomSelected }: RoomSelectorProps) {
   }
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-lg">
-        {/* Header */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">UML Collaboration</h1>
-          <p className="mt-2 text-gray-600">CS 2340 Real-Time Diagram Editor</p>
+    <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden bg-gt-navy">
+      {/* Animated background grid effect */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="h-full w-full" style={{
+          backgroundImage: 'linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent)',
+          backgroundSize: '50px 50px',
+        }} />
+      </div>
+
+      {/* Decorative accent */}
+
+      <div className="relative w-full max-w-md space-y-8 rounded-md bg-white p-10 border border-gt-gold/10">
+        {/* Header with icon */}
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-md bg-gt-navy">
+            <span className="text-2xl font-bold text-gt-techgold">🔗</span>
+          </div>
+          <h1 className="text-4xl font-black text-gt-navy tracking-tight">UML Workspace</h1>
+          <p className="text-sm font-medium text-gt-navy/60 uppercase tracking-widest">Georgia Tech • CS 2340</p>
         </div>
 
         {/* Quick Start */}
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-900">Quick Start</h2>
+          <h2 className="text-xs font-bold text-gt-navy uppercase tracking-widest opacity-70">Quick Start</h2>
           <button
             onClick={handleQuickStart}
-            className="w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white hover:bg-blue-700 transition"
+            className="w-full rounded-md bg-gt-navy px-6 py-4 font-bold text-white transition-all duration-300 ease-out hover:bg-gt-navy/90 hover:-translate-y-[2px] hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-gt-navy/30 focus:ring-offset-2"
           >
             Create New Room
           </button>
-          <p className="text-sm text-gray-500 text-center">
-            Generates a random room ID for instant collaboration
+          <p className="text-xs text-gt-navy/50 text-center leading-relaxed">
+            Generate a unique room ID for instant real-time collaboration
           </p>
         </div>
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
+            <div className="w-full border-t border-gt-gold/20" />
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-white px-2 text-gray-500">OR</span>
+          <div className="relative flex justify-center text-xs">
+            <span className="bg-white px-3 text-gt-navy/40 font-medium uppercase tracking-widest">OR</span>
           </div>
         </div>
 
         {/* Join Existing Room */}
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-900">Join Room</h2>
-          <div className="flex gap-2">
+          <h2 className="text-xs font-bold text-gt-navy uppercase tracking-widest opacity-70">Join Room</h2>
+          <div className="flex gap-3">
             <input
               type="text"
               value={joinRoomInput}
               onChange={(e) => setJoinRoomInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleJoinRoom()}
-              placeholder="Enter room code (e.g., ABC1234)"
-              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none"
+              placeholder="Enter room code"
+              className="flex-1 rounded-md border-2 border-gt-gold/20 px-4 py-3 text-gt-navy placeholder-gt-navy/30 focus:border-gt-techgold focus:outline-none bg-gt-navy/2 transition-colors"
             />
             <button
               onClick={handleJoinRoom}
               disabled={!joinRoomInput.trim()}
-              className="rounded-lg bg-gray-300 px-4 py-2 font-medium text-gray-700 hover:bg-gray-400 disabled:opacity-50 transition"
+              className="rounded-md bg-gt-techgold hover:bg-[#e0a800] disabled:opacity-50 px-5 py-3 font-bold text-gt-navy transition-all duration-300 ease-out hover:-translate-y-[2px] hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-gt-techgold/50 focus:ring-offset-2 disabled:transform-none disabled:shadow-none disabled:hover:bg-gt-techgold disabled:cursor-not-allowed"
             >
               Join
             </button>
@@ -89,29 +102,29 @@ export default function RoomSelector({ onRoomSelected }: RoomSelectorProps) {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
+            <div className="w-full border-t border-gt-gold/20" />
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-white px-2 text-gray-500">OR</span>
+          <div className="relative flex justify-center text-xs">
+            <span className="bg-white px-3 text-gt-navy/40 font-medium uppercase tracking-widest">OR</span>
           </div>
         </div>
 
         {/* Custom Room */}
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-900">Custom Room</h2>
-          <div className="flex gap-2">
+          <h2 className="text-xs font-bold text-gt-navy uppercase tracking-widest opacity-70">Custom Room</h2>
+          <div className="flex gap-3">
             <input
               type="text"
               value={customRoomInput}
               onChange={(e) => setCustomRoomInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleCreateRoom()}
               placeholder="Choose a room name"
-              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none"
+              className="flex-1 rounded-md border-2 border-gt-gold/20 px-4 py-3 text-gt-navy placeholder-gt-navy/30 focus:border-gt-techgold focus:outline-none bg-gt-navy/2 transition-colors"
             />
             <button
               onClick={handleCreateRoom}
               disabled={!customRoomInput.trim()}
-              className="rounded-lg bg-gray-300 px-4 py-2 font-medium text-gray-700 hover:bg-gray-400 disabled:opacity-50 transition"
+              className="rounded-md bg-gt-techgold hover:bg-[#e0a800] disabled:opacity-50 px-5 py-3 font-bold text-gt-navy transition-all duration-300 ease-out hover:-translate-y-[2px] hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-gt-techgold/50 focus:ring-offset-2 disabled:transform-none disabled:shadow-none disabled:hover:bg-gt-techgold disabled:cursor-not-allowed"
             >
               Create
             </button>
@@ -119,8 +132,8 @@ export default function RoomSelector({ onRoomSelected }: RoomSelectorProps) {
         </div>
 
         {/* Footer */}
-        <div className="mt-8 border-t border-gray-200 pt-4 text-center text-xs text-gray-500">
-          <p>All diagrams are synced in real-time across collaborators in the same room.</p>
+        <div className="border-t border-gt-gold/10 pt-6 text-center text-xs text-gt-navy/50 leading-relaxed">
+          <p>✨ All diagrams sync in real-time with your team</p>
         </div>
       </div>
     </div>

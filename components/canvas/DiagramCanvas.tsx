@@ -114,15 +114,21 @@ export default function DiagramCanvas() {
   }, [updatePosition, activeDiagram]);
 
   const onConnect = useCallback((connection: Connection) => {
-    if (connection.source && connection.target) {
+    // Prevent self-connections
+    if (connection.source === connection.target) {
+      return;
+    }
+
+    // Verify both entities exist before creating relationship
+    if (connection.source && connection.target && entities[connection.source] && entities[connection.target]) {
       let kind: RelationshipKind = 'association';
       if (activeDiagram === 'ucd') kind = 'association';
       else if (activeDiagram === 'dcd') kind = 'association';
       else if (activeDiagram === 'sd') kind = 'message';
-      
+
       addRelationship(connection.source, connection.target, kind);
     }
-  }, [addRelationship, activeDiagram]);
+  }, [addRelationship, activeDiagram, entities]);
 
   return (
     <div className="flex-1 w-full h-full bg-slate-50">

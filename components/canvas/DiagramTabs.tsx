@@ -14,14 +14,14 @@ export default function DiagramTabs() {
   ];
 
   return (
-    <div className="flex border-b border-gray-200 bg-white pt-2 px-2 shadow-sm z-10">
+    <div className="flex border-b border-gt-gold/20 bg-white pt-3 px-3 z-10">
       {tabs.map((tab) => (
         <button
           key={tab.id}
-          className={`px-6 py-2.5 mx-1 mb-[-1px] text-sm font-semibold rounded-t-lg transition-all duration-200 border border-b-0 ${
+          className={`px-6 py-3 mx-1 mb-[-1px] text-sm font-bold rounded-t-md transition-all duration-300 border-b-2 ${
             activeDiagram === tab.id
-              ? 'bg-white border-gray-200 text-gt-navy shadow-[0_-2px_0_0_#EAAA00]'
-              : 'bg-gray-50 border-transparent text-gray-500 hover:text-gt-navy hover:bg-gray-100'
+              ? 'bg-white border-gt-techgold text-gt-navy'
+              : 'bg-transparent border-transparent text-gt-navy/50 hover:text-gt-navy hover:bg-gt-navy/5'
           }`}
           onClick={() => setActiveDiagram(tab.id)}
         >

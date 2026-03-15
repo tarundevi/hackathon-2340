@@ -43,7 +43,7 @@ export default function ClassNode({ data }: NodeProps) {
   };
 
   return (
-    <div className="bg-white border-2 border-gt-navy rounded-lg shadow-lg p-0 min-w-[200px]">
+    <div className="bg-white border-2 border-gt-navy rounded-md p-0 min-w-[200px]">
       <Handle type="target" position={Position.Top} />
 
       {/* Name Section */}

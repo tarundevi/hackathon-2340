@@ -25,7 +25,7 @@ export default function UseCaseNode({ data }: NodeProps) {
   return (
     <div
       onDoubleClick={() => setIsEditing(true)}
-      className="bg-white border-2 border-gt-navy rounded-full px-6 py-4 text-center font-semibold shadow-lg cursor-pointer hover:bg-gray-50 min-w-[120px]"
+      className="bg-white border-2 border-gt-navy rounded-full px-6 py-4 text-center font-semibold cursor-pointer hover:bg-gray-50 min-w-[120px]"
     >
       {isEditing ? (
         <input

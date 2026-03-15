@@ -34,11 +34,11 @@ export default function PlaybackSlider() {
   }
 
   return (
-    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 bg-white/95 backdrop-blur-md px-4 py-3 rounded-lg shadow-lg border border-gray-200 flex items-center gap-3 max-w-md">
+    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 bg-white px-4 py-3 rounded-md border border-gray-200 flex items-center gap-3 max-w-md">
       {/* Play/Pause */}
       <button
         onClick={() => setIsPlaying(!isPlaying)}
-        className="bg-gt-navy hover:bg-[#1a1744] text-white px-3 py-2 rounded-lg font-semibold transition-all"
+        className="bg-gt-navy hover:bg-[#1a1744] text-white px-3 py-2 rounded-md font-semibold transition-all"
       >
         {isPlaying ? '⏸' : '▶'}
       </button>
@@ -53,7 +53,7 @@ export default function PlaybackSlider() {
           setPlaybackIndex(parseInt(e.target.value));
           setIsPlaying(false);
         }}
-        className="flex-1 h-2 bg-gray-200 rounded-lg cursor-pointer appearance-none"
+        className="flex-1 h-2 bg-gray-200 rounded-md cursor-pointer appearance-none"
         style={{
           background: `linear-gradient(to right, #262262 0%, #262262 ${(playbackIndex / maxIndex) * 100}%, #e5e7eb ${(playbackIndex / maxIndex) * 100}%, #e5e7eb 100%)`
         }}
@@ -70,7 +70,7 @@ export default function PlaybackSlider() {
           setPlaybackIndex(0);
           setIsPlaying(false);
         }}
-        className="bg-gray-200 hover:bg-gray-300 text-gt-navy px-3 py-2 rounded-lg font-semibold transition-all"
+        className="bg-gray-200 hover:bg-gray-300 text-gt-navy px-3 py-2 rounded-md font-semibold transition-all"
       >
         ↻
       </button>

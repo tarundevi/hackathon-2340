@@ -94,10 +94,12 @@ function wrapZustandActions() {
       originalDeleteEntity(id)
       ydoc.transact(() => {
         yEntities.delete(id)
-        // Also remove relationships
+        // Also remove only relationships touching this entity
         const rels = Object.entries(useGraphStore.getState().relationships)
-        rels.forEach(([relId]) => {
-          yRelationships.delete(relId)
+        rels.forEach(([relId, rel]) => {
+          if (rel.source === id || rel.target === id) {
+            yRelationships.delete(relId)
+          }
         })
       })
     },

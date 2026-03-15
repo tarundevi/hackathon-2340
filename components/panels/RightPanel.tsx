@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { useGraphStore } from '@/lib/store/graphStore';
 import { validateDiagramsWithAI, getErrorCount, getWarningCount } from '@/lib/validation';
 
-export default function RightPanel() {
+interface RightPanelProps {
+  onToggle?: () => void;
+}
+
+export default function RightPanel({ onToggle }: RightPanelProps) {
   const [tab, setTab] = useState<'ai' | 'traceability'>('ai');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,20 +48,29 @@ export default function RightPanel() {
   };
 
   return (
-    <div className="w-80 bg-white border-l border-gray-200 flex flex-col h-full shadow-[-4px_0_24px_rgba(0,0,0,0.02)] z-20 relative">
-      <div className="flex bg-gray-50/80 border-b border-gray-200 p-1">
+    <div className="w-80 bg-white border-l border-gt-gold/15 flex flex-col h-full shadow-[-4px_0_24px_rgba(0,0,0,0.05)] z-20 relative">
+      <div className="bg-white border-b border-gt-gold/15 p-1.5 gap-1 flex items-center">
         <button
-          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${tab === 'ai' ? 'bg-white text-gt-navy shadow-sm' : 'text-gray-500 hover:text-gt-navy'}`}
+          className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-300 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-gt-navy/30 focus:ring-offset-1 ${tab === 'ai' ? 'bg-gt-navy text-gt-gold shadow hover:-translate-y-[1px]' : 'text-gt-navy/60 hover:text-gt-navy hover:bg-gt-navy/5 hover:-translate-y-[1px]'}`}
           onClick={() => setTab('ai')}
         >
-          AI TA Check
+          🤖 AI Check
         </button>
         <button
-          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${tab === 'traceability' ? 'bg-white text-gt-navy shadow-sm' : 'text-gray-500 hover:text-gt-navy'}`}
+          className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-300 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-gt-navy/30 focus:ring-offset-1 ${tab === 'traceability' ? 'bg-gt-navy text-gt-gold shadow hover:-translate-y-[1px]' : 'text-gt-navy/60 hover:text-gt-navy hover:bg-gt-navy/5 hover:-translate-y-[1px]'}`}
           onClick={() => setTab('traceability')}
         >
-          Traceability
+          🔗 Trace
         </button>
+        {onToggle && (
+          <button
+            onClick={onToggle}
+            title="Hide panel"
+            className="p-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gt-navy transition-all duration-300 ease-out hover:-translate-y-[1px] hover:shadow-sm active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-1 flex-shrink-0"
+          >
+            ▶
+          </button>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto p-5">
@@ -66,7 +79,7 @@ export default function RightPanel() {
             <button
               onClick={runAICheck}
               disabled={isLoading}
-              className="w-full bg-gt-techgold hover:bg-[#d49a00] text-gt-navy font-bold py-3 px-4 rounded-xl shadow-sm disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+              className="w-full bg-gt-techgold hover:bg-[#e0a800] text-gt-navy font-bold py-3 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ease-out active:scale-95 hover:-translate-y-[2px] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gt-techgold/50 focus:ring-offset-2 flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -81,16 +94,16 @@ export default function RightPanel() {
 
             <div className="flex flex-col gap-3">
               {validationResults.length === 0 && !isLoading && (
-                <div className="text-center p-8 bg-gray-50 border border-gray-100 rounded-xl mt-4">
-                  <div className="text-3xl mb-2">🤖</div>
-                  <h3 className="text-sm font-semibold text-gray-900">AI Assistant Ready</h3>
-                  <p className="text-xs text-gray-500 mt-1 leading-relaxed">Run a check to identify logic errors and inconsistencies across your diagrams.</p>
+                <div className="text-center p-6 bg-gray-50 border border-gt-gold/30 rounded-md mt-4">
+                  <div className="text-4xl mb-3">🤖</div>
+                  <h3 className="text-sm font-bold text-gt-navy">AI Assistant Ready</h3>
+                  <p className="text-xs text-gt-navy/60 mt-2 leading-relaxed font-medium">Run a check to identify logic errors and inconsistencies across your diagrams.</p>
                 </div>
               )}
               {validationResults.map((flag, i) => (
                 <div 
                   key={i} 
-                  className={`p-4 rounded-xl border text-sm shadow-sm ${
+                  className={`p-4 rounded-md border text-sm ${
                     flag.severity === 'error' ? 'bg-red-50/50 border-red-200 text-red-900' : 'bg-yellow-50/50 border-yellow-200 text-yellow-900'
                   }`}
                 >
@@ -109,27 +122,27 @@ export default function RightPanel() {
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-4">
+            <div className="text-xs font-bold text-gt-navy/70 uppercase tracking-widest mb-4 opacity-80">
               Entity Diagram Membership
             </div>
             {Object.values(entities).length === 0 ? (
-              <div className="text-sm text-gray-500">No entities loaded</div>
+              <div className="text-sm text-gt-navy/50 italic">No entities loaded</div>
             ) : (
               Object.values(entities).map(entity => (
                 <div
                   key={entity.id}
-                  className="bg-gray-50 rounded-lg p-3 border border-gray-200 text-xs"
+                  className="bg-gt-navy/5 rounded-md p-3 border border-gt-navy/15 text-xs hover:bg-gt-navy/8 transition-colors"
                 >
-                  <div className="font-semibold text-gray-900 mb-2">{entity.name}</div>
-                  <div className="flex flex-wrap gap-1">
+                  <div className="font-bold text-gt-navy mb-2">{entity.name}</div>
+                  <div className="flex flex-wrap gap-2">
                     {entity.kind === 'class' && (
-                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">DCD</span>
+                      <span className="bg-blue-100/70 text-blue-900 px-2.5 py-1 rounded-lg text-xs font-semibold">▭ DCD</span>
                     )}
                     {(entity.kind === 'actor' || entity.kind === 'usecase') && (
-                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">UCD</span>
+                      <span className="bg-emerald-100/70 text-emerald-900 px-2.5 py-1 rounded-lg text-xs font-semibold">◯ UCD</span>
                     )}
                     {entity.kind === 'lifeline' && (
-                      <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">SD</span>
+                      <span className="bg-gray-200/70 text-gray-800 px-2.5 py-1 rounded-lg text-xs font-semibold">∥ SD</span>
                     )}
                   </div>
                 </div>
