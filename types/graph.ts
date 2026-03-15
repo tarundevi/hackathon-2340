@@ -1,6 +1,9 @@
 export type EntityKind = 'class' | 'actor' | 'usecase' | 'lifeline'
+
 export type RelationshipKind = 'association' | 'aggregation' | 'composition' | 'inheritance' | 'extends' | 'includes' | 'message'
+
 export type DiagramType = 'ucd' | 'dcd' | 'sd'
+
 export type Severity = 'error' | 'warning'
 
 export type Entity = {

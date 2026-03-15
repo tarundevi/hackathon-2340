@@ -6,7 +6,12 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'gt-navy': '#003057',
+        'gt-techgold': '#B3A369',
+      },
+    },
   },
   plugins: [],
 }

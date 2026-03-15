@@ -2,8 +2,9 @@
 
 import { useMemo, useCallback } from 'react';
 import ReactFlow, { 
-  Background, 
-  Controls, 
+  Background,
+  Controls,
+  MiniMap,
   Node, 
   Edge, 
   NodeChange, 
@@ -14,6 +15,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 import { useGraphStore } from '@/lib/store/graphStore';
+import { usePresenceSelection } from '@/lib/usePresenceSelection';
 import ClassNode from '../nodes/ClassNode';
 import ActorNode from '../nodes/ActorNode';
 import UseCaseNode from '../nodes/UseCaseNode';
@@ -59,6 +61,7 @@ export default function DiagramCanvas() {
   const updatePosition = useGraphStore(state => state.updatePosition);
   const addRelationship = useGraphStore(state => state.addRelationship);
   const connectMode = useGraphStore(state => state.connectMode);
+  const { remoteSelections, setLocalSelection } = usePresenceSelection();
 
   const relevantKinds = getRelevantKinds(activeDiagram);
 
@@ -67,14 +70,15 @@ export default function DiagramCanvas() {
       .filter(e => relevantKinds.includes(e.kind))
       .map(e => {
         const pos = positions.find(p => p.entityId === e.id && p.diagramType === activeDiagram);
+        const selectors = remoteSelections.filter(s => s.selectedNodeId === e.id);
         return {
           id: e.id,
           type: e.kind,
           position: pos ? { x: pos.x, y: pos.y } : { x: 100, y: 100 },
-          data: { entity: e }
+          data: { entity: e, remoteSelectors: selectors }
         };
       });
-  }, [entities, positions, activeDiagram, relevantKinds]);
+  }, [entities, positions, activeDiagram, relevantKinds, remoteSelections]);
 
   const edges: Edge[] = useMemo(() => {
     return Object.values(relationships)
@@ -130,6 +134,14 @@ export default function DiagramCanvas() {
     }
   }, [addRelationship, activeDiagram, entities]);
 
+  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    setLocalSelection(node.id);
+  }, [setLocalSelection]);
+
+  const onPaneClick = useCallback(() => {
+    setLocalSelection(null);
+  }, [setLocalSelection]);
+
   return (
     <div className="flex-1 w-full h-full bg-slate-50">
       <ReactFlow
@@ -137,11 +149,30 @@ export default function DiagramCanvas() {
         edges={edges}
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
+        onNodeClick={onNodeClick}
+        onPaneClick={onPaneClick}
         onConnect={connectMode ? onConnect : undefined}
         fitView
       >
         <Background gap={16} color="#e2e8f0" />
         <Controls />
+        <MiniMap
+          nodeStrokeColor="#003057"
+          nodeColor={(node) => {
+            switch (node.type) {
+              case 'class': return '#003057'
+              case 'actor': return '#10b981'
+              case 'usecase': return '#B3A369'
+              case 'lifeline': return '#3b82f6'
+              default: return '#B3A369'
+            }
+          }}
+          maskColor="rgba(0,0,0,0.08)"
+          position="top-right"
+          pannable
+          zoomable
+          style={{ borderRadius: 8, width: 180, height: 130 }}
+        />
       </ReactFlow>
     </div>
   );

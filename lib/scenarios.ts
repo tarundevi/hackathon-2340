@@ -144,3 +144,4 @@ export function getScenario(key: ScenarioKey) {
 export function getScenarioNames(): ScenarioKey[] {
   return Object.keys(SCENARIOS) as ScenarioKey[]
 }
+

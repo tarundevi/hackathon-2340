@@ -3,14 +3,30 @@
 import { useGraphStore } from '@/lib/store/graphStore';
 import { undoManager } from '@/lib/ydoc';
 import { exportCanvasToPNG } from '@/lib/export';
+import { computeAutoLayout } from '@/lib/autoLayout';
+import { useReactFlow } from 'reactflow';
 
 export default function Toolbar() {
   const addEntity = useGraphStore(state => state.addEntity);
   const activeDiagram = useGraphStore(state => state.activeDiagram);
+  const entities = useGraphStore(state => state.entities);
+  const relationships = useGraphStore(state => state.relationships);
+  const updatePosition = useGraphStore(state => state.updatePosition);
   const [connectMode, setConnectMode] = useGraphStore(state => [state.connectMode, state.setConnectMode]);
+  const { fitView } = useReactFlow();
 
   const btnStyle = "bg-gt-navy hover:bg-gt-navy/90 active:scale-95 text-white px-5 py-2.5 rounded-md text-sm font-bold border border-transparent hover:-translate-y-[2px] transition-all duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gt-navy/40 focus:ring-offset-2";
   const btnStyleSecondary = "bg-white hover:bg-gray-50 active:scale-95 text-gt-navy px-5 py-2.5 rounded-md text-sm font-bold border border-gray-200 hover:-translate-y-[2px] transition-all duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2";
+
+  const handleAutoLayout = () => {
+    const newPositions = computeAutoLayout(entities, relationships, activeDiagram);
+    newPositions.forEach(({ entityId, x, y }) => {
+      updatePosition(entityId, activeDiagram, x, y);
+    });
+    // Wait for positions to propagate through Yjs and React, then fit view
+    setTimeout(() => fitView({ padding: 0.2, duration: 300 }), 100);
+    setTimeout(() => fitView({ padding: 0.2 }), 500);
+  };
 
   const handleUndo = () => {
     try {
@@ -52,6 +68,14 @@ export default function Toolbar() {
           ∥ Add Lifeline
         </button>
       )}
+
+      <button
+        onClick={handleAutoLayout}
+        className={btnStyleSecondary}
+        title="Auto-arrange nodes"
+      >
+        Auto Layout
+      </button>
 
       <button
         onClick={() => {
