@@ -7,6 +7,7 @@ import { exportCanvasToPNG } from '@/lib/export';
 export default function Toolbar() {
   const addEntity = useGraphStore(state => state.addEntity);
   const activeDiagram = useGraphStore(state => state.activeDiagram);
+  const [connectMode, setConnectMode] = useGraphStore(state => [state.connectMode, state.setConnectMode]);
 
   const btnStyle = "bg-gt-navy hover:bg-[#1a1744] text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-md border border-transparent hover:border-gt-techgold transition-all";
   const btnStyleSecondary = "bg-gray-100 hover:bg-gray-200 text-gt-navy px-5 py-2 rounded-lg text-sm font-semibold shadow-md border border-gray-300 transition-all";
@@ -75,6 +76,14 @@ export default function Toolbar() {
       </button>
       <button onClick={handleRedo} className={btnStyleSecondary} title="Redo">
         ↷ Redo
+      </button>
+
+      <button
+        onClick={() => setConnectMode(!connectMode)}
+        className={connectMode ? "bg-gt-techgold text-gt-navy px-5 py-2 rounded-lg text-sm font-semibold shadow-md border border-transparent transition-all" : btnStyleSecondary}
+        title="Enable connect mode to draw relationships"
+      >
+        🔗 Connect {connectMode ? '✓' : ''}
       </button>
     </div>
   );

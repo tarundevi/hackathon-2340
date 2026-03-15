@@ -1,0 +1,142 @@
+"use client"
+
+import { useMemo, useCallback } from 'react';
+import ReactFlow, { 
+  Background, 
+  Controls, 
+  Node, 
+  Edge, 
+  NodeChange, 
+  applyNodeChanges,
+  Connection,
+  MarkerType
+} from 'reactflow';
+import 'reactflow/dist/style.css';
+
+import { useGraphStore } from '@/lib/store/graphStore';
+import ClassNode from '../nodes/ClassNode';
+import ActorNode from '../nodes/ActorNode';
+import UseCaseNode from '../nodes/UseCaseNode';
+import LifelineNode from '../nodes/LifelineNode';
+import { EntityKind, DiagramType, RelationshipKind } from '@/types/graph';
+
+const nodeTypes = {
+  class: ClassNode,
+  actor: ActorNode,
+  usecase: UseCaseNode,
+  lifeline: LifelineNode,
+};
+
+function getRelevantKinds(diagram: DiagramType): EntityKind[] {
+  switch (diagram) {
+    case 'ucd': return ['actor', 'usecase'];
+    case 'dcd': return ['class'];
+    case 'sd': return ['lifeline'];
+    default: return [];
+  }
+}
+
+function getMarkerEnd(kind: RelationshipKind) {
+  switch (kind) {
+    case 'aggregation':
+    case 'composition':
+    case 'inheritance':
+      return { type: MarkerType.ArrowClosed, color: '#000' };
+    case 'association':
+    case 'extends':
+    case 'includes':
+    case 'message':
+    default:
+      return { type: MarkerType.ArrowClosed };
+  }
+}
+
+export default function DiagramCanvas() {
+  const entities = useGraphStore(state => state.entities);
+  const relationships = useGraphStore(state => state.relationships);
+  const positions = useGraphStore(state => state.positions);
+  const activeDiagram = useGraphStore(state => state.activeDiagram);
+  const updatePosition = useGraphStore(state => state.updatePosition);
+  const addRelationship = useGraphStore(state => state.addRelationship);
+  const connectMode = useGraphStore(state => state.connectMode);
+
+  const relevantKinds = getRelevantKinds(activeDiagram);
+
+  const nodes: Node[] = useMemo(() => {
+    return Object.values(entities)
+      .filter(e => relevantKinds.includes(e.kind))
+      .map(e => {
+        const pos = positions.find(p => p.entityId === e.id && p.diagramType === activeDiagram);
+        return {
+          id: e.id,
+          type: e.kind,
+          position: pos ? { x: pos.x, y: pos.y } : { x: 100, y: 100 },
+          data: { entity: e }
+        };
+      });
+  }, [entities, positions, activeDiagram, relevantKinds]);
+
+  const edges: Edge[] = useMemo(() => {
+    return Object.values(relationships)
+      // basic filtering: only show edges if both source and target are in current view
+      .filter(rel => {
+        const sourceEnt = entities[rel.source];
+        const targetEnt = entities[rel.target];
+        return sourceEnt && targetEnt && 
+               relevantKinds.includes(sourceEnt.kind) && 
+               relevantKinds.includes(targetEnt.kind);
+      })
+      .map(rel => ({
+        id: rel.id,
+        source: rel.source,
+        target: rel.target,
+        label: rel.label,
+        type: 'smoothstep', // classic straight or smoothstep edges
+        animated: rel.kind === 'message',
+        style: { 
+          strokeWidth: 2, 
+          stroke: '#333',
+          strokeDasharray: ['extends', 'includes', 'message'].includes(rel.kind) ? '5,5' : 'none'
+        },
+        markerEnd: getMarkerEnd(rel.kind)
+      }));
+  }, [relationships, entities, relevantKinds]);
+
+  const onNodesChange = useCallback((changes: NodeChange[]) => {
+    // We only care about position updates to sync with store
+    changes.forEach(change => {
+      if (change.type === 'position' && change.position) {
+        // Debouncing / throttling would typically go here in a real app
+        // For hackathon, just dispatching occasionally or simply relying on the node drag end is fine.
+        updatePosition(change.id, activeDiagram, change.position.x, change.position.y);
+      }
+    });
+  }, [updatePosition, activeDiagram]);
+
+  const onConnect = useCallback((connection: Connection) => {
+    if (connection.source && connection.target) {
+      let kind: RelationshipKind = 'association';
+      if (activeDiagram === 'ucd') kind = 'association';
+      else if (activeDiagram === 'dcd') kind = 'association';
+      else if (activeDiagram === 'sd') kind = 'message';
+      
+      addRelationship(connection.source, connection.target, kind);
+    }
+  }, [addRelationship, activeDiagram]);
+
+  return (
+    <div className="flex-1 w-full h-full bg-slate-50">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onConnect={connectMode ? onConnect : undefined}
+        fitView
+      >
+        <Background gap={16} color="#e2e8f0" />
+        <Controls />
+      </ReactFlow>
+    </div>
+  );
+}

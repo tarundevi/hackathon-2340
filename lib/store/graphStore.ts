@@ -24,6 +24,8 @@ type GraphStoreState = GraphStore & {
   setActiveScenario: (name: string | null) => void
   setValidationResults: (flags: ValidationFlag[]) => void
   loadScenario: (scenario: { entities: Record<string, Entity>; relationships: Record<string, Relationship> }) => void
+  connectMode: boolean
+  setConnectMode: (enabled: boolean) => void
   reset: () => void
 }
 
@@ -34,6 +36,7 @@ const initialState: GraphStore = {
   activeDiagram: 'dcd',
   activeScenario: null,
   validationResults: [],
+  connectMode: false,
 }
 
 export const useGraphStore = create<GraphStoreState>((set) => ({
@@ -155,6 +158,10 @@ export const useGraphStore = create<GraphStoreState>((set) => ({
       positions: [],
       validationResults: [],
     })
+  },
+
+  setConnectMode: (enabled: boolean) => {
+    set({ connectMode: enabled })
   },
 
   reset: () => {

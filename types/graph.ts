@@ -40,4 +40,5 @@ export type GraphStore = {
   activeDiagram: DiagramType
   activeScenario: string | null
   validationResults: ValidationFlag[]
+  connectMode: boolean
 }
