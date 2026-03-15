@@ -3,14 +3,30 @@
 import { useGraphStore } from '@/lib/store/graphStore';
 import { undoManager } from '@/lib/ydoc';
 import { exportCanvasToPNG } from '@/lib/export';
+import { computeAutoLayout } from '@/lib/autoLayout';
+import { useReactFlow } from 'reactflow';
 
 export default function Toolbar() {
   const addEntity = useGraphStore(state => state.addEntity);
   const activeDiagram = useGraphStore(state => state.activeDiagram);
+  const entities = useGraphStore(state => state.entities);
+  const relationships = useGraphStore(state => state.relationships);
+  const updatePosition = useGraphStore(state => state.updatePosition);
   const [connectMode, setConnectMode] = useGraphStore(state => [state.connectMode, state.setConnectMode]);
+  const { fitView } = useReactFlow();
 
   const btnStyle = "bg-gt-navy hover:bg-[#1a1744] text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-md border border-transparent hover:border-gt-techgold transition-all";
   const btnStyleSecondary = "bg-gray-100 hover:bg-gray-200 text-gt-navy px-5 py-2 rounded-lg text-sm font-semibold shadow-md border border-gray-300 transition-all";
+
+  const handleAutoLayout = () => {
+    const newPositions = computeAutoLayout(entities, relationships, activeDiagram);
+    newPositions.forEach(({ entityId, x, y }) => {
+      updatePosition(entityId, activeDiagram, x, y);
+    });
+    // Wait for positions to propagate through Yjs and React, then fit view
+    setTimeout(() => fitView({ padding: 0.2, duration: 300 }), 100);
+    setTimeout(() => fitView({ padding: 0.2 }), 500);
+  };
 
   const handleUndo = () => {
     try {
@@ -52,6 +68,14 @@ export default function Toolbar() {
           + Add Lifeline
         </button>
       )}
+
+      <button
+        onClick={handleAutoLayout}
+        className={btnStyleSecondary}
+        title="Auto-arrange nodes"
+      >
+        Auto Layout
+      </button>
 
       <button
         onClick={() => {

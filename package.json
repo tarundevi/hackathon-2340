@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.8.0",
+    "@types/dagre": "^0.7.54",
     "@types/uuid": "^9.0.7",
+    "dagre": "^0.8.5",
     "html2canvas": "^1.4.1",
     "next": "^16.1.6",
     "react": "^18.2.0",
