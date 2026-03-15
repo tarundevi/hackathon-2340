@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+
 import { initializeYjsBridge } from '@/lib/store/yjsBridge'
 import './globals.css'
 
