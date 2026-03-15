@@ -7,6 +7,9 @@ import Toolbar from './Toolbar'
 import PlaybackSlider from './PlaybackSlider'
 import LeftPanel from '../panels/LeftPanel'
 import RightPanel from '../panels/RightPanel'
+import PresenceBar from '../collab/PresenceBar'
+import ShareButton from '../collab/ShareButton'
+import ActivityLog from '../collab/ActivityLog'
 import { useGraphStore } from '@/lib/store/graphStore'
 
 interface CanvasLayoutProps {
@@ -27,16 +30,23 @@ export default function CanvasLayout({ room, onExitRoom }: CanvasLayoutProps) {
         <div className="flex-1 flex flex-col gap-4 min-w-0">
           {/* Header with Room Info */}
           <div className="bg-white rounded-xl shadow-md p-4 flex items-center justify-between border border-gray-200">
-            <div>
-              <h1 className="text-lg font-bold text-gray-900">Room: {room}</h1>
-              <p className="text-sm text-gray-600">Real-time collaboration enabled</p>
+            <div className="flex items-center gap-6">
+              <div>
+                <h1 className="text-lg font-bold text-gray-900">Room: {room}</h1>
+                <p className="text-sm text-gray-600">Real-time collaboration enabled</p>
+              </div>
+              <div className="h-8 w-px bg-gray-200" />
+              <PresenceBar />
             </div>
-            <button
-              onClick={onExitRoom}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition"
-            >
-              Exit Room
-            </button>
+            <div className="flex items-center gap-3">
+              <ShareButton room={room} />
+              <button
+                onClick={onExitRoom}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition"
+              >
+                Exit Room
+              </button>
+            </div>
           </div>
 
           {/* Diagram Tabs */}
@@ -57,8 +67,9 @@ export default function CanvasLayout({ room, onExitRoom }: CanvasLayoutProps) {
           )}
 
           {/* Canvas Area */}
-          <div className="flex-1 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden min-h-0">
+          <div className="flex-1 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden min-h-0 relative">
             <DiagramCanvas />
+            <ActivityLog />
           </div>
         </div>
 

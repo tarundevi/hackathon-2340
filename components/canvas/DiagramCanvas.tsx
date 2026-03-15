@@ -14,6 +14,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 import { useGraphStore } from '@/lib/store/graphStore';
+import { usePresenceSelection } from '@/lib/usePresenceSelection';
 import ClassNode from '../nodes/ClassNode';
 import ActorNode from '../nodes/ActorNode';
 import UseCaseNode from '../nodes/UseCaseNode';
@@ -59,6 +60,7 @@ export default function DiagramCanvas() {
   const updatePosition = useGraphStore(state => state.updatePosition);
   const addRelationship = useGraphStore(state => state.addRelationship);
   const connectMode = useGraphStore(state => state.connectMode);
+  const { remoteSelections, setLocalSelection } = usePresenceSelection();
 
   const relevantKinds = getRelevantKinds(activeDiagram);
 
@@ -67,14 +69,15 @@ export default function DiagramCanvas() {
       .filter(e => relevantKinds.includes(e.kind))
       .map(e => {
         const pos = positions.find(p => p.entityId === e.id && p.diagramType === activeDiagram);
+        const selectors = remoteSelections.filter(s => s.selectedNodeId === e.id);
         return {
           id: e.id,
           type: e.kind,
           position: pos ? { x: pos.x, y: pos.y } : { x: 100, y: 100 },
-          data: { entity: e }
+          data: { entity: e, remoteSelectors: selectors }
         };
       });
-  }, [entities, positions, activeDiagram, relevantKinds]);
+  }, [entities, positions, activeDiagram, relevantKinds, remoteSelections]);
 
   const edges: Edge[] = useMemo(() => {
     return Object.values(relationships)
@@ -124,6 +127,14 @@ export default function DiagramCanvas() {
     }
   }, [addRelationship, activeDiagram]);
 
+  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    setLocalSelection(node.id);
+  }, [setLocalSelection]);
+
+  const onPaneClick = useCallback(() => {
+    setLocalSelection(null);
+  }, [setLocalSelection]);
+
   return (
     <div className="flex-1 w-full h-full bg-slate-50">
       <ReactFlow
@@ -131,6 +142,8 @@ export default function DiagramCanvas() {
         edges={edges}
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
+        onNodeClick={onNodeClick}
+        onPaneClick={onPaneClick}
         onConnect={connectMode ? onConnect : undefined}
         fitView
       >
