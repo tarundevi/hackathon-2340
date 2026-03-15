@@ -6,7 +6,13 @@ import { useGraphStore } from '@/lib/store/graphStore';
 import { Entity } from '@/types/graph';
 import SelectionRing from '../collab/SelectionRing';
 
-export default function ClassNode({ data }: NodeProps) {
+export default function ClassNode({ data, isConnectable }: NodeProps) {
+  if (!data.entity) {
+    // Render a fallback or nothing if entity is not available
+    return null;
+
+  }
+
   const entity = data.entity as Entity;
   const remoteSelectors = data.remoteSelectors || [];
   const updateEntity = useGraphStore(state => state.updateEntity);
