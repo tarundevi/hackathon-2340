@@ -88,7 +88,7 @@ export default function Toolbar() {
       <button
         onClick={() => {
           try {
-            exportCanvasToPNG(`diagram-${new Date().toISOString().slice(0,10)}.png`);
+            exportCanvasToPNG(`diagram-${activeDiagram.toUpperCase()}-${new Date().toISOString().slice(0,10)}.png`);
           } catch (e) {
             console.error('Export failed');
           }

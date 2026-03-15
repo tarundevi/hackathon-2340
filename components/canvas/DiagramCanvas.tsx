@@ -23,6 +23,8 @@ import LifelineNode from '../nodes/LifelineNode';
 import CommentNode from '../nodes/CommentNode';
 import { EntityKind, DiagramType, RelationshipKind } from '@/types/graph';
 import EdgeLabelEditor from './EdgeLabelEditor';
+import DeletableEdge from './DeletableEdge';
+import RelationshipTypeSelector from './RelationshipTypeSelector';
 
 const nodeTypes = {
   class: ClassNode,
@@ -30,6 +32,10 @@ const nodeTypes = {
   usecase: UseCaseNode,
   lifeline: LifelineNode,
   comment: CommentNode,
+};
+
+const edgeTypes = {
+  deletable: DeletableEdge,
 };
 
 function getRelevantKinds(diagram: DiagramType): EntityKind[] {
@@ -72,6 +78,7 @@ export default function DiagramCanvas() {
   const [editingEdge, setEditingEdge] = useState<{ id: string; label: string; x: number; y: number } | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+  const [pendingConnection, setPendingConnection] = useState<{ connection: Connection; x: number; y: number } | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -91,7 +98,7 @@ export default function DiagramCanvas() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedNodeId, selectedEdgeId, deleteEntity, deleteRelationship]);
 
-  const relevantKinds = getRelevantKinds(activeDiagram);
+  const relevantKinds = useMemo(() => getRelevantKinds(activeDiagram), [activeDiagram]);
 
   const nodes: Node[] = useMemo(() => {
     return Object.values(entities)
@@ -123,7 +130,7 @@ export default function DiagramCanvas() {
         source: rel.source,
         target: rel.target,
         label: rel.label,
-        type: 'smoothstep', // classic straight or smoothstep edges
+        type: 'deletable', // custom edge with hover delete button
         animated: rel.kind === 'message',
         style: { 
           strokeWidth: 2, 
@@ -146,21 +153,18 @@ export default function DiagramCanvas() {
   }, [updatePosition, activeDiagram]);
 
   const onConnect = useCallback((connection: Connection) => {
-    // Prevent self-connections
-    if (connection.source === connection.target) {
-      return;
-    }
+    if (connection.source === connection.target) return;
+    if (!connection.source || !connection.target) return;
+    if (!entities[connection.source] || !entities[connection.target]) return;
+    setPendingConnection({ connection, x: window.innerWidth / 2, y: window.innerHeight / 2 - 50 });
+  }, [entities]);
 
-    // Verify both entities exist before creating relationship
-    if (connection.source && connection.target && entities[connection.source] && entities[connection.target]) {
-      let kind: RelationshipKind = 'association';
-      if (activeDiagram === 'ucd') kind = 'association';
-      else if (activeDiagram === 'dcd') kind = 'association';
-      else if (activeDiagram === 'sd') kind = 'message';
-
-      addRelationship(connection.source, connection.target, kind);
-    }
-  }, [addRelationship, activeDiagram, entities]);
+  const handleRelationshipTypeSelect = useCallback((kind: string) => {
+    if (!pendingConnection) return;
+    const { connection } = pendingConnection;
+    addRelationship(connection.source!, connection.target!, kind as RelationshipKind);
+    setPendingConnection(null);
+  }, [pendingConnection, addRelationship]);
 
   const onEdgeDoubleClick = useCallback((e: React.MouseEvent, edge: Edge) => {
     const rel = relationships[edge.id];
@@ -190,6 +194,7 @@ export default function DiagramCanvas() {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
@@ -226,6 +231,14 @@ export default function DiagramCanvas() {
           position={{ x: editingEdge.x, y: editingEdge.y }}
           onSave={(id, label) => updateRelationship(id, { label })}
           onClose={() => setEditingEdge(null)}
+        />
+      )}
+      {pendingConnection && connectMode && (
+        <RelationshipTypeSelector
+          position={{ x: pendingConnection.x, y: pendingConnection.y }}
+          diagramType={activeDiagram}
+          onSelect={handleRelationshipTypeSelect}
+          onCancel={() => setPendingConnection(null)}
         />
       )}
     </div>
