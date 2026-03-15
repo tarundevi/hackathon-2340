@@ -2,8 +2,9 @@
 
 import { useMemo, useCallback } from 'react';
 import ReactFlow, { 
-  Background, 
-  Controls, 
+  Background,
+  Controls,
+  MiniMap,
   Node, 
   Edge, 
   NodeChange, 
@@ -149,6 +150,23 @@ export default function DiagramCanvas() {
       >
         <Background gap={16} color="#e2e8f0" />
         <Controls />
+        <MiniMap
+          nodeStrokeColor="#003057"
+          nodeColor={(node) => {
+            switch (node.type) {
+              case 'class': return '#003057'
+              case 'actor': return '#10b981'
+              case 'usecase': return '#B3A369'
+              case 'lifeline': return '#3b82f6'
+              default: return '#B3A369'
+            }
+          }}
+          maskColor="rgba(0,0,0,0.08)"
+          position="top-right"
+          pannable
+          zoomable
+          style={{ borderRadius: 8, width: 180, height: 130 }}
+        />
       </ReactFlow>
     </div>
   );
