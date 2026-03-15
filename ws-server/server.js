@@ -82,7 +82,7 @@ wss.on('connection', (ws) => {
   })
 
   ws.on('close', () => {
-    if (room) {
+    if (room && room instanceof Set) {
       room.delete(ws)
       console.log('Client disconnected from room')
     }
