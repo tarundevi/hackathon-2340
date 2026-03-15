@@ -2,26 +2,110 @@ import * as Y from 'yjs'
 import { WebsocketProvider } from 'y-websocket'
 import type { Entity, Relationship, ViewPosition } from '@/types/graph'
 
-// Initialize shared Y.Doc
-export const ydoc = new Y.Doc()
+// Global instance holder for dynamic room support
+let globalYdoc: Y.Doc | null = null
+let globalProvider: WebsocketProvider | null = null
+let globalUndoManager: Y.UndoManager | null = null
+let globalYEntities: Y.Map<Entity> | null = null
+let globalYRelationships: Y.Map<Relationship> | null = null
+let globalYPositions: Y.Array<ViewPosition> | null = null
 
-// WebSocket provider for real-time sync
-// During dev: ws://localhost:1234
-// In production: use env var NEXT_PUBLIC_WS_URL
-const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:1234'
-export const provider = new WebsocketProvider(
-  wsUrl,
-  'hackathon-room',
-  ydoc
-)
+function getRoomFromUrl(): string {
+  if (typeof window === 'undefined') return 'default-room'
+  const params = new URLSearchParams(window.location.search)
+  return params.get('room') || 'default-room'
+}
 
-// Create shared data structures within Y.Doc
-export const yEntities = ydoc.getMap<Entity>('entities')
-export const yRelationships = ydoc.getMap<Relationship>('relationships')
-export const yPositions = ydoc.getArray<ViewPosition>('positions')
+export function initializeYdoc(room: string) {
+  // Clean up previous instance if it exists
+  if (globalProvider) {
+    globalProvider.disconnect()
+  }
 
-// UndoManager for undo/redo capability
-export const undoManager = new Y.UndoManager([yEntities, yRelationships, yPositions])
+  // Create new Y.Doc
+  globalYdoc = new Y.Doc()
 
-// Awareness (for collaborative cursors later)
-export const awareness = provider.awareness
+  // WebSocket provider for real-time sync
+  const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:1234'
+  globalProvider = new WebsocketProvider(
+    wsUrl,
+    room,
+    globalYdoc
+  )
+
+  // Create shared data structures
+  globalYEntities = globalYdoc.getMap<Entity>('entities')
+  globalYRelationships = globalYdoc.getMap<Relationship>('relationships')
+  globalYPositions = globalYdoc.getArray<ViewPosition>('positions')
+
+  // UndoManager for undo/redo capability
+  globalUndoManager = new Y.UndoManager([globalYEntities, globalYRelationships, globalYPositions])
+}
+
+// Initialize on first load
+if (typeof window !== 'undefined') {
+  const room = getRoomFromUrl()
+  initializeYdoc(room)
+}
+
+// Getters for accessing global instances
+export function getYdoc(): Y.Doc {
+  if (!globalYdoc) {
+    const room = getRoomFromUrl()
+    initializeYdoc(room)
+  }
+  return globalYdoc!
+}
+
+export function getProvider(): WebsocketProvider {
+  if (!globalProvider) {
+    const room = getRoomFromUrl()
+    initializeYdoc(room)
+  }
+  return globalProvider!
+}
+
+export function getYEntities(): Y.Map<Entity> {
+  if (!globalYEntities) {
+    const room = getRoomFromUrl()
+    initializeYdoc(room)
+  }
+  return globalYEntities!
+}
+
+export function getYRelationships(): Y.Map<Relationship> {
+  if (!globalYRelationships) {
+    const room = getRoomFromUrl()
+    initializeYdoc(room)
+  }
+  return globalYRelationships!
+}
+
+export function getYPositions(): Y.Array<ViewPosition> {
+  if (!globalYPositions) {
+    const room = getRoomFromUrl()
+    initializeYdoc(room)
+  }
+  return globalYPositions!
+}
+
+export function getUndoManager(): Y.UndoManager {
+  if (!globalUndoManager) {
+    const room = getRoomFromUrl()
+    initializeYdoc(room)
+  }
+  return globalUndoManager!
+}
+
+export function getAwareness() {
+  return getProvider().awareness
+}
+
+// Exports for backwards compatibility
+export const ydoc = getYdoc()
+export const provider = getProvider()
+export const yEntities = getYEntities()
+export const yRelationships = getYRelationships()
+export const yPositions = getYPositions()
+export const undoManager = getUndoManager()
+export const awareness = getAwareness()

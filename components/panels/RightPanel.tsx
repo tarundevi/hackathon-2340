@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { useGraphStore } from '@/lib/store/graphStore';
+import { validateDiagramsWithAI, getErrorCount, getWarningCount } from '@/lib/validation';
 
 export default function RightPanel() {
   const [tab, setTab] = useState<'ai' | 'traceability'>('ai');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const entities = useGraphStore(state => state.entities);
   const validationResults = useGraphStore(state => state.validationResults);
   const setValidationResults = useGraphStore(state => state.setValidationResults);
@@ -16,26 +17,28 @@ export default function RightPanel() {
     setIsLoading(true);
     setValidationResults([]);
     try {
-      const res = await fetch('/api/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          entities: store.entities,
-          relationships: store.relationships,
-        })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.flags) {
-          setValidationResults(data.flags);
-        } else {
-          setValidationResults([{ severity: 'warning', message: 'AI returned an empty list or malformed response.' }]);
-        }
-      } else {
-        setValidationResults([{ severity: 'error', message: 'Failed to connect to API' }]);
+      const graphState = {
+        entities: store.entities,
+        relationships: store.relationships,
+        positions: store.positions,
+        activeDiagram: store.activeDiagram,
+        activeScenario: store.activeScenario,
+        validationResults: [],
+        connectMode: store.connectMode,
+      };
+
+      const flags = await validateDiagramsWithAI(graphState);
+      setValidationResults(flags);
+
+      // Show summary
+      const errorCount = getErrorCount(flags);
+      const warningCount = getWarningCount(flags);
+      if (flags.length === 0) {
+        setValidationResults([{ severity: 'warning', message: 'Validation passed! No issues found.' }]);
       }
     } catch (e) {
-      setValidationResults([{ severity: 'error', message: 'Error running validation' }]);
+      const errorMsg = e instanceof Error ? e.message : 'Unknown error';
+      setValidationResults([{ severity: 'error', message: `Validation error: ${errorMsg}` }]);
     }
     setIsLoading(false);
   };
