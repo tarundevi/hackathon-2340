@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import ReactFlow, { 
   Background,
   Controls,
@@ -20,13 +20,16 @@ import ClassNode from '../nodes/ClassNode';
 import ActorNode from '../nodes/ActorNode';
 import UseCaseNode from '../nodes/UseCaseNode';
 import LifelineNode from '../nodes/LifelineNode';
+import CommentNode from '../nodes/CommentNode';
 import { EntityKind, DiagramType, RelationshipKind } from '@/types/graph';
+import EdgeLabelEditor from './EdgeLabelEditor';
 
 const nodeTypes = {
   class: ClassNode,
   actor: ActorNode,
   usecase: UseCaseNode,
   lifeline: LifelineNode,
+  comment: CommentNode,
 };
 
 function getRelevantKinds(diagram: DiagramType): EntityKind[] {
@@ -61,13 +64,38 @@ export default function DiagramCanvas() {
   const updatePosition = useGraphStore(state => state.updatePosition);
   const addRelationship = useGraphStore(state => state.addRelationship);
   const connectMode = useGraphStore(state => state.connectMode);
+  const deleteEntity = useGraphStore(state => state.deleteEntity);
+  const deleteRelationship = useGraphStore(state => state.deleteRelationship);
+  const updateRelationship = useGraphStore(state => state.updateRelationship);
   const { remoteSelections, setLocalSelection } = usePresenceSelection();
+
+  const [editingEdge, setEditingEdge] = useState<{ id: string; label: string; x: number; y: number } | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (selectedNodeId) {
+          deleteEntity(selectedNodeId);
+          setSelectedNodeId(null);
+        } else if (selectedEdgeId) {
+          deleteRelationship(selectedEdgeId);
+          setSelectedEdgeId(null);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedNodeId, selectedEdgeId, deleteEntity, deleteRelationship]);
 
   const relevantKinds = getRelevantKinds(activeDiagram);
 
   const nodes: Node[] = useMemo(() => {
     return Object.values(entities)
-      .filter(e => relevantKinds.includes(e.kind))
+      .filter(e => relevantKinds.includes(e.kind) || e.kind === 'comment')
       .map(e => {
         const pos = positions.find(p => p.entityId === e.id && p.diagramType === activeDiagram);
         const selectors = remoteSelections.filter(s => s.selectedNodeId === e.id);
@@ -134,13 +162,27 @@ export default function DiagramCanvas() {
     }
   }, [addRelationship, activeDiagram, entities]);
 
+  const onEdgeDoubleClick = useCallback((e: React.MouseEvent, edge: Edge) => {
+    const rel = relationships[edge.id];
+    setEditingEdge({ id: edge.id, label: rel?.label || '', x: e.clientX, y: e.clientY });
+  }, [relationships]);
+
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     setLocalSelection(node.id);
+    setSelectedNodeId(node.id);
+    setSelectedEdgeId(null);
   }, [setLocalSelection]);
 
   const onPaneClick = useCallback(() => {
     setLocalSelection(null);
+    setSelectedNodeId(null);
+    setSelectedEdgeId(null);
   }, [setLocalSelection]);
+
+  const onEdgeClick = useCallback((_: React.MouseEvent, edge: Edge) => {
+    setSelectedEdgeId(edge.id);
+    setSelectedNodeId(null);
+  }, []);
 
   return (
     <div className="flex-1 w-full h-full bg-slate-50">
@@ -152,6 +194,8 @@ export default function DiagramCanvas() {
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
         onConnect={connectMode ? onConnect : undefined}
+        onEdgeDoubleClick={onEdgeDoubleClick}
+        onEdgeClick={onEdgeClick}
         fitView
         style={{ background: 'transparent' }}
       >
@@ -175,6 +219,15 @@ export default function DiagramCanvas() {
           style={{ borderRadius: 8, width: 180, height: 130 }}
         />
       </ReactFlow>
+      {editingEdge && (
+        <EdgeLabelEditor
+          edgeId={editingEdge.id}
+          initialLabel={editingEdge.label}
+          position={{ x: editingEdge.x, y: editingEdge.y }}
+          onSave={(id, label) => updateRelationship(id, { label })}
+          onClose={() => setEditingEdge(null)}
+        />
+      )}
     </div>
   );
 }

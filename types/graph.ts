@@ -1,4 +1,4 @@
-export type EntityKind = 'class' | 'actor' | 'usecase' | 'lifeline'
+export type EntityKind = 'class' | 'actor' | 'usecase' | 'lifeline' | 'comment'
 
 export type RelationshipKind = 'association' | 'aggregation' | 'composition' | 'inheritance' | 'extends' | 'includes' | 'message'
 

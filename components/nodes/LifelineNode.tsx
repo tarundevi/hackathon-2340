@@ -10,6 +10,7 @@ export default function LifelineNode({ data }: NodeProps) {
   const entity = data.entity as Entity;
   const remoteSelectors = data.remoteSelectors || [];
   const updateEntity = useGraphStore(state => state.updateEntity);
+  const deleteEntity = useGraphStore(state => state.deleteEntity);
 
   const [isEditing, setIsEditing] = useState(false);
   const [tempName, setTempName] = useState(entity.name);
@@ -29,8 +30,13 @@ export default function LifelineNode({ data }: NodeProps) {
       <div className="flex flex-col items-center">
         <div
           onDoubleClick={() => setIsEditing(true)}
-          className="bg-white border-2 border-gt-navy px-4 py-2 rounded text-sm font-semibold shadow-md cursor-pointer hover:bg-gray-50"
+          className="relative group bg-white border-2 border-gt-navy px-4 py-2 rounded text-sm font-semibold shadow-md cursor-pointer hover:bg-gray-50"
         >
+          <button
+            onClick={(e) => { e.stopPropagation(); deleteEntity(entity.id); }}
+            className="absolute -top-2 -right-2 z-10 opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs leading-none hover:bg-red-600 transition-opacity"
+            title="Delete node"
+          >×</button>
           {isEditing ? (
             <input
               autoFocus

@@ -10,6 +10,7 @@ export default function ActorNode({ data }: NodeProps) {
   const entity = data.entity as Entity;
   const remoteSelectors = data.remoteSelectors || [];
   const updateEntity = useGraphStore(state => state.updateEntity);
+  const deleteEntity = useGraphStore(state => state.deleteEntity);
 
   const [isEditing, setIsEditing] = useState(false);
   const [tempName, setTempName] = useState(entity.name);
@@ -26,7 +27,12 @@ export default function ActorNode({ data }: NodeProps) {
 
   return (
     <SelectionRing selectors={remoteSelectors}>
-      <div className="flex flex-col items-center gap-2">
+      <div className="relative group flex flex-col items-center gap-2">
+        <button
+          onClick={(e) => { e.stopPropagation(); deleteEntity(entity.id); }}
+          className="absolute top-0 right-0 z-10 opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs leading-none hover:bg-red-600 transition-opacity"
+          title="Delete node"
+        >×</button>
         <svg width="60" height="80" className="stroke-gt-navy stroke-2 fill-none">
           <circle cx="30" cy="15" r="8" />
           <line x1="30" y1="23" x2="30" y2="45" />

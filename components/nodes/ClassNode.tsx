@@ -16,6 +16,7 @@ export default function ClassNode({ data, isConnectable }: NodeProps) {
   const entity = data.entity as Entity;
   const remoteSelectors = data.remoteSelectors || [];
   const updateEntity = useGraphStore(state => state.updateEntity);
+  const deleteEntity = useGraphStore(state => state.deleteEntity);
 
   const [editingField, setEditingField] = useState<'name' | 'attributes' | 'methods' | null>(null);
   const [tempValue, setTempValue] = useState('');
@@ -52,7 +53,12 @@ export default function ClassNode({ data, isConnectable }: NodeProps) {
 
   return (
     <SelectionRing selectors={remoteSelectors}>
-      <div className="bg-white border-2 border-gt-navy rounded-lg shadow-lg p-0 min-w-[200px]">
+      <div className="relative group bg-white border-2 border-gt-navy rounded-lg shadow-lg p-0 min-w-[200px]">
+        <button
+          onClick={(e) => { e.stopPropagation(); deleteEntity(entity.id); }}
+          className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs leading-none hover:bg-red-600 transition-opacity"
+          title="Delete node"
+        >×</button>
         <Handle type="target" position={Position.Top} />
 
         <div

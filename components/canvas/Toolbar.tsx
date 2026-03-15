@@ -70,6 +70,14 @@ export default function Toolbar() {
       )}
 
       <button
+        onClick={() => addEntity('comment', 'Add your note here...')}
+        className={btnStyleSecondary}
+        title="Add a comment sticky note"
+      >
+        💬 Comment
+      </button>
+
+      <button
         onClick={handleAutoLayout}
         className={btnStyleSecondary}
         title="Auto-arrange nodes"
