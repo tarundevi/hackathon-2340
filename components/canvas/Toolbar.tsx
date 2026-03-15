@@ -2,6 +2,7 @@
 
 import { useGraphStore } from '@/lib/store/graphStore';
 import { undoManager } from '@/lib/ydoc';
+import { exportCanvasToPNG } from '@/lib/export';
 
 export default function Toolbar() {
   const addEntity = useGraphStore(state => state.addEntity);
@@ -50,6 +51,20 @@ export default function Toolbar() {
           + Add Lifeline
         </button>
       )}
+
+      <button
+        onClick={() => {
+          try {
+            exportCanvasToPNG(`diagram-${new Date().toISOString().slice(0,10)}.png`);
+          } catch (e) {
+            console.error('Export failed');
+          }
+        }}
+        className={btnStyle}
+        title="Export diagram as PNG"
+      >
+        ⬇ Export
+      </button>
 
       {/* Divider */}
       <div className="w-px bg-gray-300" />
