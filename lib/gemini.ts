@@ -8,7 +8,7 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey || '')
 
 export const model = genAI.getGenerativeModel({
-  model: 'gemini-1.5-flash',
+  model: 'gemini-2.0-flash',
 })
 
 export async function validateDiagrams(graphStore: any) {
@@ -23,8 +23,12 @@ export async function validateDiagrams(graphStore: any) {
     const flags = parseGeminiResponse(text)
     return { flags }
   } catch (error) {
-    console.error('Gemini validation error:', error)
-    return { flags: [{ severity: 'error' as const, message: 'AI validation failed' }] }
+    const errMsg = error instanceof Error ? error.message : String(error)
+    console.error('Gemini validation error:', errMsg)
+    if (errMsg.includes('429') || errMsg.includes('quota') || errMsg.includes('Too Many Requests')) {
+      return { flags: [{ severity: 'warning' as const, message: 'AI validation unavailable: API quota exceeded. Please try again later.' }] }
+    }
+    return { flags: [{ severity: 'error' as const, message: `AI validation failed: ${errMsg}` }] }
   }
 }
 
