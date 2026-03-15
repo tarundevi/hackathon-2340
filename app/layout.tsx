@@ -20,7 +20,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className="h-screen w-screen overflow-hidden">
+      <body className="h-screen w-screen overflow-hidden" suppressHydrationWarning>
         {children}
       </body>
     </html>

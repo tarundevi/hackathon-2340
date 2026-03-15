@@ -16,7 +16,7 @@ export default function PresenceBar() {
 
   useEffect(() => {
     const myColor = PALETTE[Math.floor(Math.random() * PALETTE.length)]
-    const myName = `User ${Math.floor(Math.random() * 1000)}`
+    const myName = localStorage.getItem('uml-username') || `User ${Math.floor(Math.random() * 1000)}`
 
     const existing = awareness.getLocalState()
     if (!existing?.user) {

@@ -25,9 +25,8 @@ export default function LeftPanel({ onToggle }: LeftPanelProps) {
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
 
   useEffect(() => {
-    // Set my own name randomly for now
     const myColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-    const myName = `User ${Math.floor(Math.random() * 1000)}`;
+    const myName = localStorage.getItem('uml-username') || `User ${Math.floor(Math.random() * 1000)}`;
     awareness.setLocalStateField('user', { name: myName, color: myColor });
 
     const updatePresence = () => {

@@ -107,8 +107,15 @@ export default function RightPanel({ onToggle }: RightPanelProps) {
                     flag.severity === 'error' ? 'bg-red-50/50 border-red-200 text-red-900' : 'bg-yellow-50/50 border-yellow-200 text-yellow-900'
                   }`}
                 >
-                  <div className="font-bold mb-2 flex items-center gap-2">
+                  <div className="font-bold mb-2 flex items-center gap-2 flex-wrap">
                     {flag.severity === 'error' ? <span className="bg-red-100 text-red-600 p-1 rounded-md text-xs">🚨 Error</span> : <span className="bg-yellow-100 text-yellow-600 p-1 rounded-md text-xs">⚠️ Warning</span>}
+                    {flag.diagram && (
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        flag.diagram === 'UCD' ? 'bg-emerald-100 text-emerald-800' :
+                        flag.diagram === 'DCD' ? 'bg-blue-100 text-blue-800' :
+                        'bg-purple-100 text-purple-800'
+                      }`}>{flag.diagram}</span>
+                    )}
                   </div>
                   <div className="leading-relaxed text-gray-700">{flag.message}</div>
                   {flag.entityId && entities[flag.entityId] && (

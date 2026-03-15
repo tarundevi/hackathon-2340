@@ -34,6 +34,7 @@ export type ValidationFlag = {
   severity: Severity
   message: string
   entityId?: string
+  diagram?: 'UCD' | 'DCD' | 'SD'
 }
 
 export type GraphStore = {

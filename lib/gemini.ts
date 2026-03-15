@@ -8,7 +8,7 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey || '')
 
 export const model = genAI.getGenerativeModel({
-  model: 'gemini-2.0-flash',
+  model: 'gemini-2.5-flash-lite',
 })
 
 export async function validateDiagrams(graphStore: any) {
@@ -55,9 +55,14 @@ Check for these issues:
 
 Format your response as a JSON array of issues:
 [
-  { "severity": "error" | "warning", "message": "...", "entityId": "..." },
+  { "severity": "error" | "warning", "message": "...", "entityId": "...", "diagram": "UCD" | "DCD" | "SD" },
   ...
 ]
+
+The "diagram" field must be one of: "UCD" (Use Case Diagram), "DCD" (Design Class Diagram), or "SD" (Sequence Diagram).
+- Issues about actors, use cases, or associations between them → "UCD"
+- Issues about classes, attributes, methods, visibility, or class relationships → "DCD"
+- Issues about lifelines, messages, or sequence logic → "SD"
 
 Return ONLY valid JSON, no other text.`
 }

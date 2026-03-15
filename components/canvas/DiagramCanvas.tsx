@@ -153,6 +153,7 @@ export default function DiagramCanvas() {
         onPaneClick={onPaneClick}
         onConnect={connectMode ? onConnect : undefined}
         fitView
+        style={{ background: 'transparent' }}
       >
         <Background gap={16} color="#e2e8f0" />
         <Controls />

@@ -67,7 +67,7 @@ export default function CanvasLayout({ room, onExitRoom }: CanvasLayoutProps) {
           )}
 
           {/* Canvas Area */}
-          <div className="flex-1 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden min-h-0 relative">
+          <div className="flex-1 overflow-hidden min-h-0 relative">
             <DiagramCanvas />
             <ActivityLog />
           </div>

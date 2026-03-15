@@ -8,28 +8,31 @@ export interface RoomSelectorProps {
 }
 
 export default function RoomSelector({ onRoomSelected }: RoomSelectorProps) {
+  const [username, setUsername] = useState('')
   const [joinRoomInput, setJoinRoomInput] = useState('')
   const [customRoomInput, setCustomRoomInput] = useState('')
 
-  const handleQuickStart = () => {
-    const roomId = generateRoomId()
+  const saveAndEnter = (roomId: string) => {
+    if (username.trim()) {
+      localStorage.setItem('uml-username', username.trim())
+    }
     setRoomInUrl(roomId)
     onRoomSelected(roomId)
   }
 
+  const handleQuickStart = () => {
+    saveAndEnter(generateRoomId())
+  }
+
   const handleJoinRoom = () => {
     if (joinRoomInput.trim()) {
-      const roomId = joinRoomInput.trim().toUpperCase()
-      setRoomInUrl(roomId)
-      onRoomSelected(roomId)
+      saveAndEnter(joinRoomInput.trim().toUpperCase())
     }
   }
 
   const handleCreateRoom = () => {
     if (customRoomInput.trim()) {
-      const roomId = customRoomInput.trim().toUpperCase()
-      setRoomInUrl(roomId)
-      onRoomSelected(roomId)
+      saveAndEnter(customRoomInput.trim().toUpperCase())
     }
   }
 
@@ -53,6 +56,18 @@ export default function RoomSelector({ onRoomSelected }: RoomSelectorProps) {
           </div>
           <h1 className="text-4xl font-black text-gt-navy tracking-tight">UML Workspace</h1>
           <p className="text-sm font-medium text-gt-navy/60 uppercase tracking-widest">Georgia Tech • CS 2340</p>
+        </div>
+
+        {/* Username */}
+        <div className="space-y-3">
+          <h2 className="text-xs font-bold text-gt-navy uppercase tracking-widest opacity-70">Your Name</h2>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter your name"
+            className="w-full rounded-md border-2 border-gt-gold/20 px-4 py-3 text-gt-navy placeholder-gt-navy/30 focus:border-gt-techgold focus:outline-none bg-gt-navy/2 transition-colors"
+          />
         </div>
 
         {/* Quick Start */}
