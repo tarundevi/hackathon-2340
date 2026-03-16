@@ -189,7 +189,7 @@ export default function LearnPage() {
 
       <div className="relative z-10 w-full">
         <Slide id="start">
-          <div className="grid lg:grid-cols-[1.2fr_1fr] gap-12 items-center">
+          <div className="max-w-4xl">
             <div className="relative">
               <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white border border-gray-200/60 shadow-sm text-gt-navy font-black text-[11px] tracking-widest uppercase mb-6 backdrop-blur-md">
                 <span className="w-2 h-2 rounded-full bg-gt-techgold animate-pulse"></span>
@@ -211,33 +211,6 @@ export default function LearnPage() {
                   <span className="text-xl group-hover:scale-110 group-hover:-rotate-12 transition-transform">✍️</span>
                 </Link>
               </div>
-            </div>
-
-            <div className="rounded-[40px] border border-white/50 bg-white/60 backdrop-blur-2xl p-10 shadow-[0_8px_40px_rgb(0,0,0,0.06)] relative overflow-hidden transform md:rotate-2 hover:rotate-0 transition-transform duration-500">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-gt-techgold/10 rounded-bl-full -mr-10 -mt-10 blur-3xl"></div>
-              <p className="text-[12px] font-black uppercase tracking-widest text-gray-400 mb-6 relative z-10 flex items-center gap-2">
-                <span className="w-full h-px bg-gray-200 block"></span>
-                <span className="shrink-0">What You Need to Submit</span>
-                <span className="w-full h-px bg-gray-200 block"></span>
-              </p>
-              <ul className="space-y-4 text-[15px] text-gt-navy font-bold relative z-10">
-                <li className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:-translate-y-0.5 transition-transform">
-                  <span className="w-10 h-10 rounded-xl bg-gray-100 text-gray-500 font-black flex items-center justify-center shrink-0">1</span>
-                  <span>Public website URL</span>
-                </li>
-                <li className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:-translate-y-0.5 transition-transform">
-                  <span className="w-10 h-10 rounded-xl bg-gray-100 text-gray-500 font-black flex items-center justify-center shrink-0">2</span>
-                  <span>GitHub repo URL</span>
-                </li>
-                <li className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:-translate-y-0.5 transition-transform">
-                  <span className="w-10 h-10 rounded-xl bg-gray-100 text-gray-500 font-black flex items-center justify-center shrink-0">3</span>
-                  <span>Video walkthrough URL</span>
-                </li>
-                <li className="flex gap-4 items-center bg-emerald-50 p-4 rounded-2xl shadow-sm border border-emerald-100 hover:-translate-y-0.5 transition-transform">
-                  <span className="w-10 h-10 rounded-xl bg-emerald-500 text-white font-black flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20">✓</span>
-                  <span className="text-emerald-950">All 5 required diagrams</span>
-                </li>
-              </ul>
             </div>
           </div>
         </Slide>
