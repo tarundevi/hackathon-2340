@@ -107,7 +107,15 @@ export default function DiagramCanvas() {
 
   const nodes: Node[] = useMemo(() => {
     const mapped = Object.values(entities)
-      .filter(e => relevantKinds.includes(e.kind) || e.kind === 'comment' || e.kind === 'boundary')
+      .filter(e => {
+        if (relevantKinds.includes(e.kind) || e.kind === 'comment') return true;
+        if (e.kind === 'boundary') {
+          // Boundaries created after this fix are scoped to one diagram.
+          // Keep legacy unscoped boundaries visible to avoid hiding existing work.
+          return !e.diagramScope || e.diagramScope === activeDiagram;
+        }
+        return false;
+      })
       .map(e => {
         const pos = positions.find(p => p.entityId === e.id && p.diagramType === activeDiagram);
         const selectors = remoteSelections.filter(s => s.selectedNodeId === e.id);

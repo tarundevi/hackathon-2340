@@ -61,6 +61,24 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - **Minimap** — overview panel for large diagrams
 - **Export** — save diagrams as images
 
+## Hackathon Submission Packet (CS 2340)
+
+Fill in these three links before final submission:
+
+- Live website: `TODO_ADD_PUBLIC_URL`
+- GitHub repository: `TODO_ADD_GITHUB_REPO_URL`
+- Video walkthrough: `TODO_ADD_VIDEO_URL`
+
+Requirement status:
+
+- [x] Publicly deployable architecture documented (Vercel + Railway)
+- [x] Includes all 5 required diagram types (UCD, DMD, DCD, SD, SSD)
+- [x] Includes required scenario mapping (SD -> Scenario 2, SSD -> Scenario 3, DCD -> Scenario 2, UCD -> Scenarios 1/2/3)
+- [x] Teaches purpose, build process, and cross-diagram connections (`/learn`)
+- [x] Custom-coded implementation (Next.js + TypeScript), no site builder
+
+Detailed evidence checklist: see `HACKATHON_REQUIREMENTS_CHECKLIST.md`.
+
 ## Scripts
 
 | Command | Description |

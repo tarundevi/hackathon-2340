@@ -42,7 +42,7 @@ export default function CommentNode({ data }: NodeProps) {
         title="Delete comment"
       >×</button>
 
-      <Handle type="target" position={Position.Top} style={{ opacity: 0 }} />
+      <Handle type="target" position={Position.Top} />
 
       {editing ? (
         <textarea
@@ -63,7 +63,7 @@ export default function CommentNode({ data }: NodeProps) {
         </div>
       )}
 
-      <Handle type="source" position={Position.Bottom} style={{ opacity: 0 }} />
+      <Handle type="source" position={Position.Bottom} />
     </div>
   );
 }

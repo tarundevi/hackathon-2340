@@ -62,9 +62,10 @@ export default function RoomSelector({ onRoomSelected }: RoomSelectorProps) {
         {/* Learn Link */}
         <Link
           href="/learn"
-          className="flex items-center justify-center gap-2 w-full py-3 rounded-md bg-gt-techgold/20 border-2 border-gt-techgold text-gt-navy font-bold text-sm hover:bg-gt-techgold/30 transition-all"
+          className="group relative flex items-center justify-center gap-2 w-full py-3.5 rounded-md bg-gradient-to-r from-gt-techgold via-[#fcdb73] to-gt-techgold bg-[length:200%_auto] text-gt-navy font-black text-sm transition-all duration-500 hover:bg-right shadow-[0_0_15px_rgba(234,170,0,0.3)] hover:shadow-[0_0_25px_rgba(234,170,0,0.6)] hover:-translate-y-0.5 border border-[#ffeaa7]"
         >
-          📚 Learn UML Diagrams (UCD, DMD, DCD, SD, SSD)
+          <span className="text-lg group-hover:scale-110 transition-transform duration-300">📚</span> 
+          <span>Learn UML Diagrams (UCD, DMD, DCD, SD, SSD)</span>
         </Link>
 
         {/* Username */}

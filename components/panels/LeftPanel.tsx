@@ -6,6 +6,7 @@ import { SCENARIOS, ScenarioKey } from '@/lib/scenarios';
 import { useGraphStore } from '@/lib/store/graphStore';
 import { DiagramType } from '@/types/graph';
 import { awareness } from '@/lib/ydoc';
+import Toolbar from '@/components/canvas/Toolbar';
 
 type Collaborator = {
   clientId: number;
@@ -106,10 +107,20 @@ export default function LeftPanel({ onToggle }: LeftPanelProps) {
         {/* Learn Link */}
         <Link
           href="/learn"
-          className="flex items-center gap-2 px-4 py-3 rounded-md bg-gt-techgold/20 border-2 border-gt-techgold text-gt-navy font-bold text-sm hover:bg-gt-techgold/30 transition-all"
+          className="group flex items-center gap-3 px-4 py-3 rounded-md bg-gradient-to-r from-gt-techgold/10 to-transparent border border-gt-techgold/30 text-gt-navy font-black text-sm hover:bg-gt-techgold/15 hover:border-gt-techgold/50 transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(234,170,0,0.15)] hover:-translate-y-[1px]"
         >
-          📚 <span>Learn UML Diagrams</span>
+          <span className="text-lg group-hover:scale-110 transition-transform duration-300 drop-shadow-sm">📚</span> 
+          <span>Learn UML Diagrams</span>
+          <span className="ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-gt-techgold">→</span>
         </Link>
+
+        <div>
+          <h2 className="text-[10px] font-black text-gt-navy mb-3 uppercase tracking-widest flex items-center gap-2 opacity-80">
+            🧰 Diagram Tools
+          </h2>
+          <p className="text-[10px] text-gt-navy/50 mb-3 leading-relaxed">Add and edit diagram elements from here to maximize canvas height.</p>
+          <Toolbar layout="vertical" />
+        </div>
 
         <div>
           <h2 className="text-[10px] font-black text-gt-navy mb-3 uppercase tracking-widest flex items-center gap-2 opacity-80">

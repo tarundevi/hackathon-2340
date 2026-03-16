@@ -5,8 +5,8 @@ import { Handle, Position, NodeProps } from 'reactflow';
 import { useGraphStore } from '@/lib/store/graphStore';
 import { Entity, BoundarySubtype } from '@/types/graph';
 
-const DEFAULT_WIDTH = 320;
-const DEFAULT_HEIGHT = 220;
+const DEFAULT_WIDTH = 640;
+const DEFAULT_HEIGHT = 420;
 const MIN_WIDTH = 160;
 const MIN_HEIGHT = 100;
 
@@ -225,23 +225,23 @@ export default function BoundaryNode({ data }: NodeProps) {
 
         {/* Resize handle */}
         <div
-          className="nodrag opacity-0 group-hover:opacity-100 transition-opacity"
+          className="nodrag opacity-80 group-hover:opacity-100 transition-opacity"
           onMouseDown={onResizeMouseDown}
           style={{
             position: 'absolute',
             bottom: 0,
             right: 0,
-            width: 18,
-            height: 18,
+            width: 24,
+            height: 24,
             cursor: 'se-resize',
             display: 'flex',
             alignItems: 'flex-end',
             justifyContent: 'flex-end',
-            padding: 2,
+            padding: 4,
           }}
           title="Drag to resize"
         >
-          <svg width="10" height="10" viewBox="0 0 10 10" fill={style.headerColor} opacity={0.6}>
+          <svg width="12" height="12" viewBox="0 0 10 10" fill={style.headerColor} opacity={0.8}>
             <path d="M9 1L1 9M9 5L5 9M9 9L9 9" stroke={style.headerColor} strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </div>
@@ -255,9 +255,9 @@ export default function BoundaryNode({ data }: NodeProps) {
         title="Delete boundary"
       >×</button>
 
-      {/* ReactFlow connection handles (invisible) */}
-      <Handle type="target" position={Position.Top} style={{ opacity: 0 }} />
-      <Handle type="source" position={Position.Bottom} style={{ opacity: 0 }} />
+      {/* ReactFlow connection handles */}
+      <Handle type="target" position={Position.Top} />
+      <Handle type="source" position={Position.Bottom} />
     </div>
   );
 }

@@ -18,6 +18,7 @@ export type Entity = {
   subtype?: BoundarySubtype
   width?: number
   height?: number
+  diagramScope?: DiagramType
 }
 
 export type Relationship = {

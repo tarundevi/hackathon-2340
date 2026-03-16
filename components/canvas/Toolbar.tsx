@@ -7,7 +7,11 @@ import { exportCanvasToPNG } from '@/lib/export';
 import { computeAutoLayout } from '@/lib/autoLayout';
 import { useReactFlow } from 'reactflow';
 
-export default function Toolbar() {
+interface ToolbarProps {
+  layout?: 'horizontal' | 'vertical';
+}
+
+export default function Toolbar({ layout = 'horizontal' }: ToolbarProps) {
   const addEntity = useGraphStore(state => state.addEntity);
   const updateEntity = useGraphStore(state => state.updateEntity);
   const activeDiagram = useGraphStore(state => state.activeDiagram);
@@ -15,15 +19,17 @@ export default function Toolbar() {
 
   const addBoundary = (subtype: BoundarySubtype, name: string) => {
     const id = addEntity('boundary', name);
-    updateEntity(id, { subtype, width: 320, height: 220 });
+    updateEntity(id, { subtype, width: 640, height: 420, diagramScope: activeDiagram });
   };
   const relationships = useGraphStore(state => state.relationships);
   const updatePosition = useGraphStore(state => state.updatePosition);
   const [connectMode, setConnectMode] = useGraphStore(state => [state.connectMode, state.setConnectMode]);
   const { fitView } = useReactFlow();
 
-  const btnStyle = "bg-gt-navy hover:bg-gt-navy/90 active:scale-95 text-white px-5 py-2.5 rounded-md text-sm font-bold border border-transparent hover:-translate-y-[2px] transition-all duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gt-navy/40 focus:ring-offset-2";
-  const btnStyleSecondary = "bg-white hover:bg-gray-50 active:scale-95 text-gt-navy px-5 py-2.5 rounded-md text-sm font-bold border border-gray-200 hover:-translate-y-[2px] transition-all duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2";
+  const isVertical = layout === 'vertical';
+  const btnBase = isVertical ? 'w-full justify-start text-left' : '';
+  const btnStyle = `bg-gt-navy hover:bg-gt-navy/90 active:scale-95 text-white px-5 py-2.5 rounded-md text-sm font-bold border border-transparent hover:-translate-y-[2px] transition-all duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gt-navy/40 focus:ring-offset-2 inline-flex items-center gap-2 ${btnBase}`;
+  const btnStyleSecondary = `bg-white hover:bg-gray-50 active:scale-95 text-gt-navy px-5 py-2.5 rounded-md text-sm font-bold border border-gray-200 hover:-translate-y-[2px] transition-all duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 inline-flex items-center gap-2 ${btnBase}`;
 
   const handleAutoLayout = () => {
     const newPositions = computeAutoLayout(entities, relationships, activeDiagram);
@@ -52,7 +58,7 @@ export default function Toolbar() {
   };
 
   return (
-    <div className="bg-white px-4 py-3 rounded-md border border-gt-navy/20 flex gap-3 flex-wrap items-center">
+    <div className={`bg-white px-4 py-3 rounded-md border border-gt-navy/20 flex gap-3 ${isVertical ? 'flex-col items-stretch' : 'flex-wrap items-center'}`}>
       {activeDiagram === 'dcd' && (
         <button onClick={() => addEntity('class', 'NewClass')} className={btnStyle}>
           ▭ Add Class
@@ -154,7 +160,7 @@ export default function Toolbar() {
       </button>
 
       {/* Divider */}
-      <div className="w-px bg-gt-navy/10 h-6" />
+      <div className={isVertical ? 'h-px bg-gt-navy/10 w-full' : 'w-px bg-gt-navy/10 h-6'} />
 
       {/* Undo/Redo buttons */}
       <button onClick={handleUndo} className={btnStyleSecondary} title="Undo">
@@ -166,7 +172,7 @@ export default function Toolbar() {
 
       <button
         onClick={() => setConnectMode(!connectMode)}
-        className={connectMode ? "bg-gt-techgold hover:bg-[#e0a800] active:scale-95 text-gt-navy px-5 py-2.5 rounded-md text-sm font-bold border border-transparent transition-all hover:-translate-y-[2px] duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gt-techgold/50 focus:ring-offset-2" : btnStyleSecondary}
+        className={connectMode ? `bg-gt-techgold hover:bg-[#e0a800] active:scale-95 text-gt-navy px-5 py-2.5 rounded-md text-sm font-bold border border-transparent transition-all hover:-translate-y-[2px] duration-300 ease-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gt-techgold/50 focus:ring-offset-2 inline-flex items-center gap-2 ${btnBase}` : btnStyleSecondary}
         title="Enable connect mode to draw relationships"
       >
         🔗 Connect {connectMode ? '✓' : ''}
