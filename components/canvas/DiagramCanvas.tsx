@@ -74,7 +74,6 @@ export default function DiagramCanvas() {
   const activeDiagram = useGraphStore(state => state.activeDiagram);
   const updatePosition = useGraphStore(state => state.updatePosition);
   const addRelationship = useGraphStore(state => state.addRelationship);
-  const connectMode = useGraphStore(state => state.connectMode);
   const deleteEntity = useGraphStore(state => state.deleteEntity);
   const deleteRelationship = useGraphStore(state => state.deleteRelationship);
   const updateRelationship = useGraphStore(state => state.updateRelationship);
@@ -223,7 +222,7 @@ export default function DiagramCanvas() {
         onNodesChange={onNodesChange}
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
-        onConnect={connectMode ? onConnect : undefined}
+        onConnect={onConnect}
         onEdgeDoubleClick={onEdgeDoubleClick}
         onEdgeClick={onEdgeClick}
         fitView
@@ -258,7 +257,7 @@ export default function DiagramCanvas() {
           onClose={() => setEditingEdge(null)}
         />
       )}
-      {pendingConnection && connectMode && (
+      {pendingConnection && (
         <RelationshipTypeSelector
           position={{ x: pendingConnection.x, y: pendingConnection.y }}
           diagramType={activeDiagram}

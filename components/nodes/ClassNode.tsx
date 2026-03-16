@@ -60,7 +60,7 @@ export default function ClassNode({ data, isConnectable }: NodeProps) {
           className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs leading-none hover:bg-red-600 transition-opacity"
           title="Delete node"
         >×</button>
-        <Handle type="target" position={Position.Top} />
+        <Handle type="target" position={Position.Top} isConnectable={isConnectable} />
 
         <div
           onDoubleClick={() => handleDoubleClick('name')}
@@ -130,7 +130,7 @@ export default function ClassNode({ data, isConnectable }: NodeProps) {
           </div>
         )}
 
-        <Handle type="source" position={Position.Bottom} />
+        <Handle type="source" position={Position.Bottom} isConnectable={isConnectable} />
       </div>
     </SelectionRing>
   );
