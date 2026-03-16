@@ -1,8 +1,10 @@
-export type EntityKind = 'class' | 'actor' | 'usecase' | 'lifeline' | 'comment'
+export type EntityKind = 'class' | 'actor' | 'usecase' | 'lifeline' | 'comment' | 'boundary' | 'domain'
+
+export type BoundarySubtype = 'system' | 'package' | 'frame'
 
 export type RelationshipKind = 'association' | 'aggregation' | 'composition' | 'inheritance' | 'extends' | 'includes' | 'message'
 
-export type DiagramType = 'ucd' | 'dcd' | 'sd'
+export type DiagramType = 'ucd' | 'dmd' | 'dcd' | 'sd' | 'ssd'
 
 export type Severity = 'error' | 'warning'
 
@@ -12,6 +14,10 @@ export type Entity = {
   name: string
   attributes: string[]   // e.g. ["-id: String", "+name: String"]
   methods: string[]      // e.g. ["+rsvp(): void", "+cancel(): boolean"]
+  // boundary-specific
+  subtype?: BoundarySubtype
+  width?: number
+  height?: number
 }
 
 export type Relationship = {
@@ -34,7 +40,7 @@ export type ValidationFlag = {
   severity: Severity
   message: string
   entityId?: string
-  diagram?: 'UCD' | 'DCD' | 'SD'
+  diagram?: 'UCD' | 'DMD' | 'DCD' | 'SD' | 'SSD'
 }
 
 export type GraphStore = {

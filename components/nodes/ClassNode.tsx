@@ -17,6 +17,7 @@ export default function ClassNode({ data, isConnectable }: NodeProps) {
   const remoteSelectors = data.remoteSelectors || [];
   const updateEntity = useGraphStore(state => state.updateEntity);
   const deleteEntity = useGraphStore(state => state.deleteEntity);
+  const isDomain = entity.kind === 'domain';
 
   const [editingField, setEditingField] = useState<'name' | 'attributes' | 'methods' | null>(null);
   const [tempValue, setTempValue] = useState('');
@@ -63,7 +64,7 @@ export default function ClassNode({ data, isConnectable }: NodeProps) {
 
         <div
           onDoubleClick={() => handleDoubleClick('name')}
-          className="bg-gt-navy text-white p-3 font-bold text-center border-b border-gray-300 cursor-pointer hover:bg-[#1a1744]"
+          className={`${isDomain ? 'bg-teal-700' : 'bg-gt-navy'} text-white p-3 font-bold text-center border-b border-gray-300 cursor-pointer hover:opacity-90`}
         >
           {editingField === 'name' ? (
             <input
@@ -103,29 +104,31 @@ export default function ClassNode({ data, isConnectable }: NodeProps) {
           )}
         </div>
 
-        <div
-          onDoubleClick={() => handleDoubleClick('methods')}
-          className="p-3 text-sm cursor-pointer hover:bg-gray-50 min-h-[60px]"
-        >
-          {editingField === 'methods' ? (
-            <textarea
-              autoFocus
-              value={tempValue}
-              onChange={(e) => setTempValue(e.target.value)}
-              onBlur={handleSave}
-              onKeyDown={handleKeyDown}
-              className="w-full bg-white border border-gt-navy p-2 rounded text-sm font-mono"
-              rows={3}
-            />
-          ) : (
-            <div>
-              {entity.methods.map((method, i) => (
-                <div key={i} className="font-mono">{method}</div>
-              ))}
-              {entity.methods.length === 0 && <span className="text-gray-400">No methods</span>}
-            </div>
-          )}
-        </div>
+        {!isDomain && (
+          <div
+            onDoubleClick={() => handleDoubleClick('methods')}
+            className="p-3 text-sm cursor-pointer hover:bg-gray-50 min-h-[60px]"
+          >
+            {editingField === 'methods' ? (
+              <textarea
+                autoFocus
+                value={tempValue}
+                onChange={(e) => setTempValue(e.target.value)}
+                onBlur={handleSave}
+                onKeyDown={handleKeyDown}
+                className="w-full bg-white border border-gt-navy p-2 rounded text-sm font-mono"
+                rows={3}
+              />
+            ) : (
+              <div>
+                {entity.methods.map((method, i) => (
+                  <div key={i} className="font-mono">{method}</div>
+                ))}
+                {entity.methods.length === 0 && <span className="text-gray-400">No methods</span>}
+              </div>
+            )}
+          </div>
+        )}
 
         <Handle type="source" position={Position.Bottom} />
       </div>

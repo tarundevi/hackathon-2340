@@ -19,7 +19,7 @@ export default function PlaybackSlider() {
 
   // Auto-advance when playing
   useEffect(() => {
-    if (!isPlaying || activeDiagram !== 'sd') return;
+    if (!isPlaying || (activeDiagram !== 'sd' && activeDiagram !== 'ssd')) return;
 
     const timer = setTimeout(() => {
       setPlaybackIndex(prev => prev < maxIndex ? prev + 1 : maxIndex);
@@ -28,8 +28,8 @@ export default function PlaybackSlider() {
     return () => clearTimeout(timer);
   }, [isPlaying, playbackIndex, maxIndex, activeDiagram]);
 
-  // Only show in SD diagram
-  if (activeDiagram !== 'sd') {
+  // Only show in SD and SSD diagrams
+  if (activeDiagram !== 'sd' && activeDiagram !== 'ssd') {
     return null;
   }
 

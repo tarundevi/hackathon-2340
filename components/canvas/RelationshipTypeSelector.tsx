@@ -2,7 +2,7 @@
 
 interface RelationshipTypeSelectorProps {
   position: { x: number; y: number };
-  diagramType: 'ucd' | 'dcd' | 'sd';
+  diagramType: 'ucd' | 'dmd' | 'dcd' | 'sd' | 'ssd';
   onSelect: (kind: string) => void;
   onCancel: () => void;
 }
@@ -25,32 +25,30 @@ const SD_TYPES = [
 ];
 
 export default function RelationshipTypeSelector({ position, diagramType, onSelect, onCancel }: RelationshipTypeSelectorProps) {
-  const types = diagramType === 'dcd' ? DCD_TYPES : diagramType === 'ucd' ? UCD_TYPES : SD_TYPES;
+  const types = diagramType === 'dcd' || diagramType === 'dmd' ? DCD_TYPES : diagramType === 'ucd' ? UCD_TYPES : SD_TYPES;
 
   return (
     <div
-      className="absolute z-50 bg-white border-2 border-gt-navy rounded-lg shadow-xl p-2 min-w-[160px]"
-      style={{ left: position.x - 80, top: position.y - 10 }}
+      className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-white border-2 border-gt-navy rounded-xl shadow-2xl px-4 py-3 flex items-center gap-2"
       onClick={(e) => e.stopPropagation()}
     >
-      <p className="text-[10px] font-bold text-gt-navy/50 uppercase tracking-wider px-1 pb-1 mb-1 border-b border-gray-100">
+      <span className="text-xs font-bold text-gt-navy uppercase tracking-wider whitespace-nowrap pr-2 border-r border-gt-navy/20">
         Relationship Type
-      </p>
+      </span>
       {types.map(t => (
         <button
           key={t.kind}
           onClick={() => onSelect(t.kind)}
-          className="w-full text-left px-2 py-1.5 rounded text-sm text-gt-navy font-medium hover:bg-gt-navy/5 transition-colors flex items-center justify-between gap-2"
+          className="px-3 py-1.5 rounded-lg text-sm text-gt-navy font-semibold border border-gt-navy/20 hover:bg-gt-navy hover:text-white transition-colors whitespace-nowrap"
         >
-          <span>{t.label}</span>
-          <span className="text-xs text-gt-navy/40 font-mono">{t.symbol}</span>
+          {t.label}
         </button>
       ))}
       <button
         onClick={onCancel}
-        className="w-full mt-1 text-center text-xs text-gray-400 hover:text-gray-600 py-1"
+        className="ml-1 px-2 py-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
       >
-        Cancel
+        ✕
       </button>
     </div>
   );

@@ -4,8 +4,10 @@ import type { Entity, Relationship, DiagramType, EntityKind } from '@/types/grap
 function getRelevantKinds(diagram: DiagramType): EntityKind[] {
   switch (diagram) {
     case 'ucd': return ['actor', 'usecase']
+    case 'dmd': return ['domain']
     case 'dcd': return ['class']
     case 'sd': return ['lifeline']
+    case 'ssd': return ['lifeline', 'actor']
     default: return []
   }
 }
@@ -238,10 +240,12 @@ export function computeAutoLayout(
 
   switch (activeDiagram) {
     case 'sd':
+    case 'ssd':
       return layoutSequenceDiagram(relevantEntities, relevantRels)
     case 'ucd':
       return layoutUseCaseDiagram(relevantEntities, relevantRels)
     case 'dcd':
+    case 'dmd':
       return layoutClassDiagram(relevantEntities, relevantRels)
     default:
       return []

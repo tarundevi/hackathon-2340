@@ -10,6 +10,7 @@ const config: Config = {
       colors: {
         'gt-navy': '#003057',
         'gt-techgold': '#B3A369',
+        'gt-gold': '#EAAA00',
       },
     },
   },

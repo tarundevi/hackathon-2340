@@ -64,6 +64,7 @@ function wrapZustandActions() {
   const originalUpdateRelationship = useGraphStore.getState().updateRelationship
   const originalDeleteRelationship = useGraphStore.getState().deleteRelationship
   const originalUpdatePosition = useGraphStore.getState().updatePosition
+  const originalLoadScenario = useGraphStore.getState().loadScenario
 
   // Wrap addEntity
   useGraphStore.setState({
@@ -148,6 +149,27 @@ function wrapZustandActions() {
         positions.forEach((pos) => {
           yPositions.push([pos])
         })
+      })
+    },
+  })
+
+  // Wrap loadScenario so scenario entities/relationships are written to Yjs
+  useGraphStore.setState({
+    loadScenario: (scenario) => {
+      originalLoadScenario(scenario)
+      ydoc.transact(() => {
+        // Clear and repopulate entities
+        yEntities.forEach((_, key) => yEntities.delete(key))
+        Object.entries(scenario.entities).forEach(([id, entity]) => {
+          yEntities.set(id, entity)
+        })
+        // Clear and repopulate relationships
+        yRelationships.forEach((_, key) => yRelationships.delete(key))
+        Object.entries(scenario.relationships).forEach(([id, rel]) => {
+          yRelationships.set(id, rel)
+        })
+        // Clear positions (loadScenario resets them)
+        yPositions.delete(0, yPositions.length)
       })
     },
   })

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { generateRoomId, setRoomInUrl } from '@/lib/rooms'
 
 export interface RoomSelectorProps {
@@ -57,6 +58,14 @@ export default function RoomSelector({ onRoomSelected }: RoomSelectorProps) {
           <h1 className="text-4xl font-black text-gt-navy tracking-tight">UML Workspace</h1>
           <p className="text-sm font-medium text-gt-navy/60 uppercase tracking-widest">Georgia Tech • CS 2340</p>
         </div>
+
+        {/* Learn Link */}
+        <Link
+          href="/learn"
+          className="flex items-center justify-center gap-2 w-full py-3 rounded-md bg-gt-techgold/20 border-2 border-gt-techgold text-gt-navy font-bold text-sm hover:bg-gt-techgold/30 transition-all"
+        >
+          📚 Learn UML Diagrams (UCD, DMD, DCD, SD, SSD)
+        </Link>
 
         {/* Username */}
         <div className="space-y-3">

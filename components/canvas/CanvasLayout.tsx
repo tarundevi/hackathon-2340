@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { ReactFlowProvider } from 'reactflow'
 import DiagramCanvas from './DiagramCanvas'
 import DiagramTabs from './DiagramTabs'
@@ -19,12 +20,24 @@ interface CanvasLayoutProps {
 
 export default function CanvasLayout({ room, onExitRoom }: CanvasLayoutProps) {
   const activeDiagram = useGraphStore(state => state.activeDiagram)
+  const [leftOpen, setLeftOpen] = useState(true)
+  const [rightOpen, setRightOpen] = useState(true)
 
   return (
     <ReactFlowProvider>
       <div className="flex h-screen w-screen bg-gray-50 gap-4 p-4">
         {/* Left Panel - Scenarios & Collaborators */}
-        <LeftPanel />
+        {leftOpen ? (
+          <LeftPanel onToggle={() => setLeftOpen(false)} />
+        ) : (
+          <button
+            onClick={() => setLeftOpen(true)}
+            title="Show left panel"
+            className="self-start mt-2 p-2 rounded-md bg-white border border-gray-200 shadow-sm hover:bg-gray-50 text-gt-navy transition-all"
+          >
+            ▶
+          </button>
+        )}
 
         {/* Center Content */}
         <div className="flex-1 flex flex-col gap-4 min-w-0">
@@ -59,8 +72,8 @@ export default function CanvasLayout({ room, onExitRoom }: CanvasLayoutProps) {
             <Toolbar />
           </div>
 
-          {/* Playback Slider - Only show in SD */}
-          {activeDiagram === 'sd' && (
+          {/* Playback Slider - Show in SD and SSD */}
+          {(activeDiagram === 'sd' || activeDiagram === 'ssd') && (
             <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4">
               <PlaybackSlider />
             </div>
@@ -74,7 +87,17 @@ export default function CanvasLayout({ room, onExitRoom }: CanvasLayoutProps) {
         </div>
 
         {/* Right Panel - AI Assistant & Traceability */}
-        <RightPanel />
+        {rightOpen ? (
+          <RightPanel onToggle={() => setRightOpen(false)} />
+        ) : (
+          <button
+            onClick={() => setRightOpen(true)}
+            title="Show right panel"
+            className="self-start mt-2 p-2 rounded-md bg-white border border-gray-200 shadow-sm hover:bg-gray-50 text-gt-navy transition-all"
+          >
+            ◀
+          </button>
+        )}
       </div>
     </ReactFlowProvider>
   )

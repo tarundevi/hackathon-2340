@@ -21,6 +21,7 @@ import ActorNode from '../nodes/ActorNode';
 import UseCaseNode from '../nodes/UseCaseNode';
 import LifelineNode from '../nodes/LifelineNode';
 import CommentNode from '../nodes/CommentNode';
+import BoundaryNode from '../nodes/BoundaryNode';
 import { EntityKind, DiagramType, RelationshipKind } from '@/types/graph';
 import EdgeLabelEditor from './EdgeLabelEditor';
 import DeletableEdge from './DeletableEdge';
@@ -28,10 +29,12 @@ import RelationshipTypeSelector from './RelationshipTypeSelector';
 
 const nodeTypes = {
   class: ClassNode,
+  domain: ClassNode,
   actor: ActorNode,
   usecase: UseCaseNode,
   lifeline: LifelineNode,
   comment: CommentNode,
+  boundary: BoundaryNode,
 };
 
 const edgeTypes = {
@@ -41,8 +44,10 @@ const edgeTypes = {
 function getRelevantKinds(diagram: DiagramType): EntityKind[] {
   switch (diagram) {
     case 'ucd': return ['actor', 'usecase'];
+    case 'dmd': return ['domain'];
     case 'dcd': return ['class'];
     case 'sd': return ['lifeline'];
+    case 'ssd': return ['lifeline', 'actor'];
     default: return [];
   }
 }
@@ -101,18 +106,30 @@ export default function DiagramCanvas() {
   const relevantKinds = useMemo(() => getRelevantKinds(activeDiagram), [activeDiagram]);
 
   const nodes: Node[] = useMemo(() => {
-    return Object.values(entities)
-      .filter(e => relevantKinds.includes(e.kind) || e.kind === 'comment')
+    const mapped = Object.values(entities)
+      .filter(e => relevantKinds.includes(e.kind) || e.kind === 'comment' || e.kind === 'boundary')
       .map(e => {
         const pos = positions.find(p => p.entityId === e.id && p.diagramType === activeDiagram);
         const selectors = remoteSelections.filter(s => s.selectedNodeId === e.id);
+        const isBoundary = e.kind === 'boundary';
         return {
           id: e.id,
           type: e.kind,
           position: pos ? { x: pos.x, y: pos.y } : { x: 100, y: 100 },
-          data: { entity: e, remoteSelectors: selectors }
+          data: { entity: e, remoteSelectors: selectors },
+          // Boundaries render behind other nodes; use nodeDragHandle so only header is draggable
+          ...(isBoundary ? {
+            zIndex: -1,
+            nodeDragHandle: '.boundary-drag-handle',
+          } : {}),
         };
       });
+    // Put boundaries first so they render behind other nodes in SVG order
+    return mapped.sort((a, b) => {
+      if (a.type === 'boundary' && b.type !== 'boundary') return -1;
+      if (a.type !== 'boundary' && b.type === 'boundary') return 1;
+      return 0;
+    });
   }, [entities, positions, activeDiagram, relevantKinds, remoteSelections]);
 
   const edges: Edge[] = useMemo(() => {

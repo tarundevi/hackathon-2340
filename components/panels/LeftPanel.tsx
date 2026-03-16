@@ -1,8 +1,10 @@
 "use client"
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { SCENARIOS, ScenarioKey } from '@/lib/scenarios';
 import { useGraphStore } from '@/lib/store/graphStore';
+import { DiagramType } from '@/types/graph';
 import { awareness } from '@/lib/ydoc';
 
 type Collaborator = {
@@ -17,10 +19,23 @@ interface LeftPanelProps {
   onToggle?: () => void;
 }
 
+// Map each scenario key to the diagram tab it should open
+const SCENARIO_DIAGRAM_MAP: Partial<Record<ScenarioKey, DiagramType>> = {
+  ucd_all: 'ucd',
+  dmd_campus: 'dmd',
+  dcd_daniel: 'dcd',
+  jordan: 'dcd',
+  daniel: 'dcd',
+  priya: 'dcd',
+  sd_daniel: 'sd',
+  ssd_priya: 'ssd',
+};
+
 export default function LeftPanel({ onToggle }: LeftPanelProps) {
   const loadScenario = useGraphStore(state => state.loadScenario);
   const activeScenario = useGraphStore(state => state.activeScenario);
   const setActiveScenario = useGraphStore(state => state.setActiveScenario);
+  const setActiveDiagram = useGraphStore(state => state.setActiveDiagram);
   const entities = useGraphStore(state => state.entities);
 
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
@@ -30,8 +45,8 @@ export default function LeftPanel({ onToggle }: LeftPanelProps) {
     e.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const kindLabel: Record<string, string> = { class: 'DCD', actor: 'UCD', usecase: 'UCD', lifeline: 'SD', comment: 'All' };
-  const kindColor: Record<string, string> = { class: 'bg-blue-100 text-blue-800', actor: 'bg-emerald-100 text-emerald-800', usecase: 'bg-emerald-100 text-emerald-800', lifeline: 'bg-purple-100 text-purple-800', comment: 'bg-gray-100 text-gray-700' };
+  const kindLabel: Record<string, string> = { class: 'DCD', domain: 'DMD', actor: 'UCD/SSD', usecase: 'UCD', lifeline: 'SD/SSD', comment: 'All' };
+  const kindColor: Record<string, string> = { class: 'bg-blue-100 text-blue-800', domain: 'bg-teal-100 text-teal-800', actor: 'bg-emerald-100 text-emerald-800', usecase: 'bg-emerald-100 text-emerald-800', lifeline: 'bg-purple-100 text-purple-800', comment: 'bg-gray-100 text-gray-700' };
 
   useEffect(() => {
     const myColor = COLORS[Math.floor(Math.random() * COLORS.length)];
@@ -59,9 +74,11 @@ export default function LeftPanel({ onToggle }: LeftPanelProps) {
   }, []);
 
   const handleLoad = (key: ScenarioKey) => {
-    if (confirm(`Load scenario ${SCENARIOS[key].name}? This will replace your current canvas.`)) {
+    if (confirm(`Load "${SCENARIOS[key].name}"? This will replace your current canvas.`)) {
       loadScenario(SCENARIOS[key] as any);
       setActiveScenario(key);
+      const targetDiagram = SCENARIO_DIAGRAM_MAP[key];
+      if (targetDiagram) setActiveDiagram(targetDiagram);
     }
   };
 
@@ -85,22 +102,85 @@ export default function LeftPanel({ onToggle }: LeftPanelProps) {
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-8">
+      <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-6">
+        {/* Learn Link */}
+        <Link
+          href="/learn"
+          className="flex items-center gap-2 px-4 py-3 rounded-md bg-gt-techgold/20 border-2 border-gt-techgold text-gt-navy font-bold text-sm hover:bg-gt-techgold/30 transition-all"
+        >
+          📚 <span>Learn UML Diagrams</span>
+        </Link>
+
         <div>
-          <h2 className="text-[10px] font-black text-gt-navy mb-4 uppercase tracking-widest flex items-center gap-2 opacity-80">
-            ▣ Scenarios
+          <h2 className="text-[10px] font-black text-gt-navy mb-3 uppercase tracking-widest flex items-center gap-2 opacity-80">
+            ▣ CampusConnect Scenarios
           </h2>
-          <div className="flex flex-col gap-2.5">
-            {(Object.keys(SCENARIOS) as ScenarioKey[]).map(key => (
-              <button
-                key={key}
-                onClick={() => handleLoad(key)}
-                className={`text-left text-sm px-4 py-3 rounded-md transition-all font-semibold border-2 duration-300 ease-out active:scale-95 hover:-translate-y-[1px] focus:outline-none focus:ring-2 focus:ring-gt-navy/20 ${
-                  activeScenario === key
-                    ? 'border-gt-techgold bg-gt-techgold/15 text-gt-navy shadow-sm'
-                    : 'border-transparent text-gt-navy/70 hover:text-gt-navy hover:bg-gt-navy/5 hover:border-gray-200 hover:shadow-sm'
-                }`}
-              >
+          <p className="text-[10px] text-gt-navy/50 mb-3 leading-relaxed">Loading a scenario auto-switches the active diagram tab.</p>
+          <div className="flex flex-col gap-2">
+            {/* Blank */}
+            {(['blank'] as ScenarioKey[]).map(key => (
+              <button key={key} onClick={() => handleLoad(key)}
+                className={`text-left text-xs px-3 py-2 rounded-md transition-all font-semibold border duration-200 active:scale-95 ${activeScenario === key ? 'border-gt-techgold bg-gt-techgold/15 text-gt-navy' : 'border-gray-200 text-gt-navy/60 hover:text-gt-navy hover:bg-gt-navy/5'}`}>
+                {SCENARIOS[key].name}
+              </button>
+            ))}
+
+            {/* UCD */}
+            <div className="mt-1 flex items-center gap-1.5">
+              <span className="text-[9px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">UCD</span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+            {(['ucd_all'] as ScenarioKey[]).map(key => (
+              <button key={key} onClick={() => handleLoad(key)}
+                className={`text-left text-xs px-3 py-2 rounded-md transition-all font-semibold border duration-200 active:scale-95 ${activeScenario === key ? 'border-gt-techgold bg-gt-techgold/15 text-gt-navy' : 'border-gray-200 text-gt-navy/60 hover:text-gt-navy hover:bg-gt-navy/5'}`}>
+                {SCENARIOS[key].name}
+              </button>
+            ))}
+
+            {/* DMD */}
+            <div className="mt-1 flex items-center gap-1.5">
+              <span className="text-[9px] font-black uppercase tracking-widest text-teal-700 bg-teal-100 px-1.5 py-0.5 rounded">DMD</span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+            {(['dmd_campus'] as ScenarioKey[]).map(key => (
+              <button key={key} onClick={() => handleLoad(key)}
+                className={`text-left text-xs px-3 py-2 rounded-md transition-all font-semibold border duration-200 active:scale-95 ${activeScenario === key ? 'border-gt-techgold bg-gt-techgold/15 text-gt-navy' : 'border-gray-200 text-gt-navy/60 hover:text-gt-navy hover:bg-gt-navy/5'}`}>
+                {SCENARIOS[key].name}
+              </button>
+            ))}
+
+            {/* DCD */}
+            <div className="mt-1 flex items-center gap-1.5">
+              <span className="text-[9px] font-black uppercase tracking-widest text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded">DCD</span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+            {(['dcd_daniel', 'jordan', 'daniel', 'priya'] as ScenarioKey[]).map(key => (
+              <button key={key} onClick={() => handleLoad(key)}
+                className={`text-left text-xs px-3 py-2 rounded-md transition-all font-semibold border duration-200 active:scale-95 ${activeScenario === key ? 'border-gt-techgold bg-gt-techgold/15 text-gt-navy' : 'border-gray-200 text-gt-navy/60 hover:text-gt-navy hover:bg-gt-navy/5'}`}>
+                {SCENARIOS[key].name}
+              </button>
+            ))}
+
+            {/* SD */}
+            <div className="mt-1 flex items-center gap-1.5">
+              <span className="text-[9px] font-black uppercase tracking-widest text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded">SD</span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+            {(['sd_daniel'] as ScenarioKey[]).map(key => (
+              <button key={key} onClick={() => handleLoad(key)}
+                className={`text-left text-xs px-3 py-2 rounded-md transition-all font-semibold border duration-200 active:scale-95 ${activeScenario === key ? 'border-gt-techgold bg-gt-techgold/15 text-gt-navy' : 'border-gray-200 text-gt-navy/60 hover:text-gt-navy hover:bg-gt-navy/5'}`}>
+                {SCENARIOS[key].name}
+              </button>
+            ))}
+
+            {/* SSD */}
+            <div className="mt-1 flex items-center gap-1.5">
+              <span className="text-[9px] font-black uppercase tracking-widest text-orange-700 bg-orange-100 px-1.5 py-0.5 rounded">SSD</span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+            {(['ssd_priya'] as ScenarioKey[]).map(key => (
+              <button key={key} onClick={() => handleLoad(key)}
+                className={`text-left text-xs px-3 py-2 rounded-md transition-all font-semibold border duration-200 active:scale-95 ${activeScenario === key ? 'border-gt-techgold bg-gt-techgold/15 text-gt-navy' : 'border-gray-200 text-gt-navy/60 hover:text-gt-navy hover:bg-gt-navy/5'}`}>
                 {SCENARIOS[key].name}
               </button>
             ))}

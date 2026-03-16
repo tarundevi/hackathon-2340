@@ -2,14 +2,21 @@
 
 import { useGraphStore } from '@/lib/store/graphStore';
 import { undoManager } from '@/lib/ydoc';
+import type { BoundarySubtype } from '@/types/graph';
 import { exportCanvasToPNG } from '@/lib/export';
 import { computeAutoLayout } from '@/lib/autoLayout';
 import { useReactFlow } from 'reactflow';
 
 export default function Toolbar() {
   const addEntity = useGraphStore(state => state.addEntity);
+  const updateEntity = useGraphStore(state => state.updateEntity);
   const activeDiagram = useGraphStore(state => state.activeDiagram);
   const entities = useGraphStore(state => state.entities);
+
+  const addBoundary = (subtype: BoundarySubtype, name: string) => {
+    const id = addEntity('boundary', name);
+    updateEntity(id, { subtype, width: 320, height: 220 });
+  };
   const relationships = useGraphStore(state => state.relationships);
   const updatePosition = useGraphStore(state => state.updatePosition);
   const [connectMode, setConnectMode] = useGraphStore(state => [state.connectMode, state.setConnectMode]);
@@ -52,6 +59,12 @@ export default function Toolbar() {
         </button>
       )}
 
+      {activeDiagram === 'dmd' && (
+        <button onClick={() => addEntity('domain', 'NewConcept')} className={btnStyle}>
+          ▭ Add Concept
+        </button>
+      )}
+
       {activeDiagram === 'ucd' && (
         <>
           <button onClick={() => addEntity('actor', 'New Actor')} className={btnStyle}>
@@ -66,6 +79,47 @@ export default function Toolbar() {
       {activeDiagram === 'sd' && (
         <button onClick={() => addEntity('lifeline', 'New Object')} className={btnStyle}>
           ∥ Add Lifeline
+        </button>
+      )}
+
+      {activeDiagram === 'ssd' && (
+        <>
+          <button onClick={() => addEntity('actor', 'Actor')} className={btnStyle}>
+            👤 Add Actor
+          </button>
+          <button onClick={() => addEntity('lifeline', ':System')} className={btnStyle}>
+            ∥ Add System
+          </button>
+        </>
+      )}
+
+      {activeDiagram === 'ucd' && (
+        <button
+          onClick={() => addBoundary('system', 'System')}
+          className={btnStyleSecondary}
+          title="Add a system boundary box"
+        >
+          ⬜ System Boundary
+        </button>
+      )}
+
+      {(activeDiagram === 'dcd' || activeDiagram === 'dmd') && (
+        <button
+          onClick={() => addBoundary('package', 'Package')}
+          className={btnStyleSecondary}
+          title="Add a package boundary"
+        >
+          📦 Package
+        </button>
+      )}
+
+      {(activeDiagram === 'sd' || activeDiagram === 'ssd') && (
+        <button
+          onClick={() => addBoundary('frame', 'Frame')}
+          className={btnStyleSecondary}
+          title="Add a frame boundary"
+        >
+          ▭ Add Frame
         </button>
       )}
 
