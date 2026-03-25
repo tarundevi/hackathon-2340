@@ -101,13 +101,6 @@ const diagrams: DiagramSlide[] = [
   },
 ]
 
-const quickChecks = [
-  'Required 5 diagrams are present: UCD, DMD, DCD, SD, SSD.',
-  'Required mapping is respected: SD -> Scenario 2, SSD -> Scenario 3, DCD -> Scenario 2.',
-  'UCD covers Scenarios 1, 2, 3.',
-  'DMD is based on CampusConnect context only (no methods).',
-  'Diagram names and operations stay internally consistent.',
-]
 
 function Slide({ id, children }: { id: string; children: React.ReactNode }) {
   return (
@@ -311,28 +304,8 @@ export default function LearnPage() {
         </Slide>
 
         <Slide id="practice">
-          <div className="grid lg:grid-cols-[1fr_1fr] gap-10 items-stretch pb-24 h-full">
-            <div className="rounded-[40px] border border-emerald-200/60 bg-gradient-to-br from-white to-emerald-50/60 p-10 md:p-14 shadow-sm hover:shadow-lg transition-shadow duration-500 h-full relative overflow-hidden">
-              <div className="absolute bottom-0 right-0 w-64 h-64 bg-emerald-300/20 rounded-tl-full blur-3xl -mr-10 -mb-10 z-0"></div>
-              <div className="relative z-10">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-800 font-black text-[11px] tracking-widest uppercase mb-8 shadow-sm">
-                  Checklist
-                </div>
-                <h2 className="text-5xl font-black text-emerald-950 tracking-tight leading-tight">Submission<br/>Ready?</h2>
-                <p className="mt-4 text-lg font-medium text-emerald-900/70">Final checks before you record your demo.</p>
-                
-                <ul className="mt-10 space-y-4">
-                  {quickChecks.map((item, i) => (
-                    <li key={i} className="flex gap-4 items-start bg-white/80 backdrop-blur p-4 rounded-2xl border border-emerald-100 shadow-sm hover:translate-x-1 transition-transform">
-                      <span className="w-7 h-7 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 text-xs mt-0.5 font-bold shadow-md shadow-emerald-500/30">✓</span>
-                      <span className="text-[15px] font-medium text-emerald-950 leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="rounded-[40px] border border-white/60 bg-white/70 backdrop-blur-2xl p-10 md:p-14 shadow-[0_8px_40px_rgb(0,0,0,0.06)] h-full flex flex-col justify-center relative overflow-hidden hover:shadow-[0_8px_50px_rgb(0,0,0,0.1)] transition-shadow duration-500">
+          <div className="flex items-stretch pb-24 h-full">
+            <div className="rounded-[40px] border border-white/60 bg-white/70 backdrop-blur-2xl p-10 md:p-14 shadow-[0_8px_40px_rgb(0,0,0,0.06)] h-full flex flex-col justify-center relative overflow-hidden hover:shadow-[0_8px_50px_rgb(0,0,0,0.1)] transition-shadow duration-500 w-full">
               <div className="absolute top-0 right-0 w-96 h-96 bg-gt-techgold/20 rounded-bl-full blur-3xl -mr-20 -mt-20 z-0 pointer-events-none"></div>
               <div className="relative z-10">
                 <h3 className="text-5xl md:text-6xl font-black text-gt-navy tracking-tight leading-[1.1]">Time to <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-gt-techgold to-orange-400">Build.</span></h3>
